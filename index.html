@@ -16,16 +16,19 @@
   --f-disp:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
   --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --r:12px; color-scheme:light;
+  --z1:#8a96a2; --z2:#2a78d6; --z3:#1baf7a; --z4:#c9a400; --z5:#eda100; --z6:#eb6834; --z7:#d03b3b;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0b1015; --surface:#131a21; --surface-2:#18212a;
   --ink:#e5ebf0; --ink-2:#a6b3bf; --ink-3:#717f8c; --line:#25303a;
   --accent:#ef6f8c; color-scheme:dark;
+  --z1:#717f8c; --z2:#3987e5; --z3:#199e70; --z4:#b39200; --z5:#c98500; --z6:#d95926; --z7:#e05a5a;
 }}
 :root[data-theme="dark"]{
   --bg:#0b1015; --surface:#131a21; --surface-2:#18212a;
   --ink:#e5ebf0; --ink-2:#a6b3bf; --ink-3:#717f8c; --line:#25303a;
   --accent:#ef6f8c; color-scheme:dark;
+  --z1:#717f8c; --z2:#3987e5; --z3:#199e70; --z4:#b39200; --z5:#c98500; --z6:#d95926; --z7:#e05a5a;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg)}
@@ -67,6 +70,31 @@ h1,h2,h3{margin:0}
 .in-st{font-size:14px;color:var(--ink-2);margin:0}
 .in-st b{color:var(--ink)}
 #inTarget{width:96px;text-align:center}
+.wo-panel{grid-column:1/-1}
+.wog{width:100%;height:120px;display:block}
+.wog-ftp{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.wog-now{stroke:var(--ink);stroke-width:2;vector-effect:non-scaling-stroke}
+.wo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.wo-card{appearance:none;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.wo-card[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.wo-card .wog{height:48px}
+.wo-card b{font:700 16px var(--f-disp)}
+.wo-card span{font-size:12.5px;color:var(--ink-2)}
+.wo-steps{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+textarea.dt-in{width:100%;min-height:70px;resize:vertical;font-family:ui-monospace,monospace;font-size:13.5px}
+.err{color:var(--crit);font-size:13.5px;margin:0}
+.ride{grid-column:1/-1}
+.ride .wog{height:160px}
+.rd-big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rd-b{background:var(--surface-2);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;min-width:0}
+.rd-b span{font-size:12.5px;color:var(--ink-2)}
+.rd-b b{font:700 52px/1 var(--f-disp);font-variant-numeric:tabular-nums}
+.rd-b small{font:600 16px var(--f-disp);color:var(--ink-2);margin-left:3px}
+.rd-sub{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2)}
+.rd-sub b{color:var(--ink);font-variant-numeric:tabular-nums}
+.rd-trace{fill:none;stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;opacity:.85}
+@media (max-width:520px){.rd-b b{font-size:34px}}
+.note a{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -81,9 +109,10 @@ var nf1=new Intl.NumberFormat('de-DE',{minimumFractionDigits:1,maximumFractionDi
 var S={view:'indoor'};
 /* Wie in Sub9: ein Eingabefeld mit Fokus wird nicht überschrieben, gerendert wird nach dem Verlassen */
 var deferred=false;
+var DEFER_IDS=['inTarget','woFtp','woText'];
 function render(){
   var ae=document.activeElement;
-  if(ae&&ae.id==='inTarget'){if(!deferred){deferred=true;ae.addEventListener('blur',function(){deferred=false;render()},{once:true})}return}
+  if(ae&&DEFER_IDS.indexOf(ae.id)>=0){if(!deferred){deferred=true;ae.addEventListener('blur',function(){deferred=false;render()},{once:true})}return}
   renderIndoor();
 }
 
@@ -140,6 +169,7 @@ function indGone(kind,dev){
   if(kind==='trainer'){
     if(IND.trainer&&IND.trainer.device!==dev)return;
     IND.trainer=null;IND.ctrl=false;IND.erg=false;IND.ergW=null;
+    IND.ctrlReq=false;if(RIDE)RIDE.lastSent=null;
     IND.live.power=IND.live.cadence=IND.live.speed=null;
     indLog('Trainer getrennt');
   }else{
@@ -157,9 +187,10 @@ function indBike(dv){
 }
 function indCpReply(dv){
   if(!dv||dv.byteLength<3||dv.getUint8(0)!==0x80)return;
-  var op=dv.getUint8(1),r=dv.getUint8(2);
-  if(op===0&&r===1)IND.ctrl=true;
-  if(op===5&&r!==1)IND.erg=false;
+  var op=dv.getUint8(1),r=dv.getUint8(2),rideOn=!!(RIDE&&!RIDE.done);
+  if(op===0){IND.ctrlReq=false;if(r===1)IND.ctrl=true}
+  if(op===5&&r!==1){IND.erg=false;if(rideOn)RIDE.lastSent=null}
+  if(op===5&&r===1&&rideOn)return;
   indLog('Trainer: '+(FTMS_OP[op]||'Befehl '+op)+' '+(FTMS_RES[r]||'Ergebnis '+r));
 }
 /* Schreibvorgänge auf den Control Point laufen seriell */
@@ -188,6 +219,7 @@ function indConnTrainer(){
     }).catch(function(){return null}).then(function(cp){
       IND.trainer={device:dev,server:srv,bike:bike,cp:cp};
       IND.ctrl=false;IND.erg=false;IND.ergW=null;
+      if(RIDE)RIDE.lastSent=null;
       indLog('Trainer verbunden: '+(dev.name||'Unbekannt'));
       if(!cp)indLog('Trainer erlaubt keine Steuerung');
     });
@@ -242,11 +274,448 @@ function indErgOff(){
   indLog('ERG beendet');
 }
 
+/* ---------- Workouts ---------- */
+var WORKOUTS=[
+ {id:'z2',name:'Grundlage 60 min',text:'10m 45-65%, 45m 68%, 5m 65-45%'},
+ {id:'akt',name:'Aktivierung 45 min',text:'10m 50-65%, 3x(1m 100%, 4m 60%), 20m 65%'},
+ {id:'sst',name:'Sweet Spot 3×12',text:'10m 45-70%, 3x(12m 90%, 4m 55%), 10m 50%'},
+ {id:'thr',name:'Schwelle 2×20',text:'15m 45-75%, 2x(20m 97%, 5m 55%), 10m 50%'},
+ {id:'vo2',name:'VO2max 5×4',text:'15m 45-75%, 5x(4m 115%, 4m 50%), 10m 50%'}
+];
+var WO={ftp:250,sel:null,text:'',err:''};
+
+/* Reiner Parser: kein DOM. Elemente durch Komma oder Zeilenumbruch getrennt, Wiederholung Nx(...) */
+function parseWorkout(text){
+  var s=String(text==null?'':text),n=s.length,p=0,MAXT=28800;
+  function fail(m){throw {woErr:m}}
+  function sp(){while(p<n&&(s[p]===' '||s[p]==='\t'||s[p]==='\r'))p++}
+  function rawAt(a){var b=a;while(b<n&&',\n)'.indexOf(s[b])<0)b++;return s.slice(a,b).trim()}
+  function elem(out,inRep){
+    var a=p,m,rx,k,inner,sum,i,dur,lo,hi,abs,lim;
+    rx=/(\d+)[ \t]*[x×][ \t]*\(/y;rx.lastIndex=p;m=rx.exec(s);
+    if(m){
+      p=rx.lastIndex;k=parseInt(m[1],10);
+      if(k<1||k>50)fail('Wert außerhalb des erlaubten Bereichs: "'+rawAt(a)+'"');
+      inner=list(true);
+      if(!inner.length)fail('Nicht verstanden: "'+s.slice(a,p).trim()+'"');
+      sum=0;inner.forEach(function(st){sum+=st.dur});
+      if(sum*k>MAXT)fail('Wert außerhalb des erlaubten Bereichs: "Gesamtdauer über 8 h"');
+      for(i=0;i<k;i++)inner.forEach(function(st){out.push({dur:st.dur,lo:st.lo,hi:st.hi,abs:st.abs})});
+      return;
+    }
+    rx=/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/y;rx.lastIndex=p;m=rx.exec(s);
+    if(!m||!m[0])fail('Nicht verstanden: "'+rawAt(a)+'"');
+    p+=m[0].length;
+    dur=(+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0);
+    sp();
+    rx=/(\d+)(?:-(\d+))?(%|[Ww])/y;rx.lastIndex=p;m=rx.exec(s);
+    if(!m)fail('Nicht verstanden: "'+rawAt(a)+'"');
+    p=rx.lastIndex;
+    abs=m[3]!=='%';lo=+m[1];hi=m[2]!==undefined?+m[2]:lo;lim=abs?2000:300;
+    if(dur<1||dur>21600||lo>lim||hi>lim)fail('Wert außerhalb des erlaubten Bereichs: "'+rawAt(a)+'"');
+    out.push(abs?{dur:dur,lo:lo,hi:hi,abs:true}:{dur:dur,lo:lo/100,hi:hi/100,abs:false});
+  }
+  function list(inRep){
+    var out=[],a,c;
+    for(;;){
+      sp();
+      if(p>=n){if(inRep)fail('Klammer fehlt');return out}
+      c=s[p];
+      if(c===','||c==='\n'){p++;continue}
+      if(c===')'){if(inRep){p++;return out}fail('Nicht verstanden: ")"')}
+      a=p;
+      elem(out,inRep);
+      sp();
+      if(p<n&&s[p]!==','&&s[p]!=='\n'&&!(inRep&&s[p]===')'))fail('Nicht verstanden: "'+rawAt(a)+'"');
+    }
+  }
+  try{
+    var steps=list(false),total=0;
+    steps.forEach(function(st){total+=st.dur});
+    if(!steps.length)fail('Kein Workout eingegeben');
+    if(total>MAXT)fail('Wert außerhalb des erlaubten Bereichs: "Gesamtdauer über 8 h"');
+    return {steps:steps,total:total,error:null};
+  }catch(e){
+    if(e&&e.woErr)return {steps:[],total:0,error:e.woErr};
+    throw e;
+  }
+}
+
+/* ---------- Workout-Hilfsfunktionen ---------- */
+function woWatts(st,ftp,frac){var v=st.lo+(st.hi-st.lo)*frac;if(!st.abs)v=v*ftp;return Math.round(v)}
+function zoneOf(f){
+  if(f<0.56)return {k:'Z1',l:'Erholung',c:'--z1'};
+  if(f<0.76)return {k:'Z2',l:'Grundlage',c:'--z2'};
+  if(f<0.88)return {k:'Z3',l:'Tempo',c:'--z3'};
+  if(f<0.95)return {k:'SST',l:'Sweet Spot',c:'--z4'};
+  if(f<1.06)return {k:'Z4',l:'Schwelle',c:'--z5'};
+  if(f<1.21)return {k:'Z5',l:'VO2max',c:'--z6'};
+  return {k:'Z6',l:'Anaerob',c:'--z7'};
+}
+function stepFrac(st,ftp){return ((st.lo+st.hi)/2)/(st.abs?ftp:1)}
+function fmtClock(sec){
+  var s=Math.max(0,Math.round(sec||0)),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;
+  var p2=function(x){return (x<10?'0':'')+x};
+  return hh?hh+':'+p2(mm)+':'+p2(ss):mm+':'+p2(ss);
+}
+function woAvg(steps,ftp){var t=0,a=0;steps.forEach(function(st){t+=st.dur;a+=stepFrac(st,ftp)*st.dur});return t?Math.round(a/t*100):0}
+function woPctTxt(st){
+  if(st.abs)return st.lo===st.hi?Math.round(st.lo)+' W':Math.round(st.lo)+'–'+Math.round(st.hi)+' W';
+  var a=Math.round(st.lo*100),b=Math.round(st.hi*100);
+  return a===b?a+' %':a+'–'+b+' %';
+}
+function woWattTxt(st){
+  var a=woWatts(st,WO.ftp,0),b=woWatts(st,WO.ftp,1);
+  return a===b?a+' W':a+'–'+b+' W';
+}
+
+/* SVG-Profil: viewBox 0 0 1000 200, 0 W unten, oben max(1.3, hoechster Bruchteil)*FTP */
+function woGraph(steps,total,ftp,opts){
+  opts=opts||{};
+  var top=woTop(steps,ftp),start=0,g='';
+  function r(v){return Math.round(v*10)/10}
+  function Y(w){return r(200-w/top*200)}
+  function X(t){return total>0?r(t/total*1000):0}
+  steps.forEach(function(st){
+    var x0=X(start),x1=X(start+st.dur),y0=Y(woWatts(st,ftp,0)),y1=Y(woWatts(st,ftp,1));
+    g+='<path d="M'+x0+' 200L'+x0+' '+y0+'L'+x1+' '+y1+'L'+x1+' 200Z" style="fill:var('+zoneOf(stepFrac(st,ftp)).c+')"/>';
+    start+=st.dur;
+  });
+  g+='<line class="wog-ftp" x1="0" x2="1000" y1="'+Y(ftp)+'" y2="'+Y(ftp)+'"/>';
+  if(opts.progress!=null){var nx=X(opts.progress);g+='<line class="wog-now" id="wogNow" x1="'+nx+'" x2="'+nx+'" y1="0" y2="200"/>'}
+  if(opts.trace&&opts.trace.length)g+='<polyline id="rdTrace" class="rd-trace" points="'+woTracePts(steps,total,ftp,opts.trace)+'"/>';
+  return '<svg viewBox="0 0 1000 200" class="wog" preserveAspectRatio="none" role="img" aria-label="Workout-Profil"'+(opts.id?' id="'+h(opts.id)+'"':'')+'>'+g+'</svg>';
+}
+
+/* ---------- Workout-Aktionen ---------- */
+function woSaveFtp(){try{localStorage.setItem('sub9i.ftp',String(WO.ftp))}catch(e){}}
+function woInit(){
+  try{var f0=Number(localStorage.getItem('sub9i.ftp'));if(f0>=80&&f0<=600)WO.ftp=f0}catch(e){}
+  var q=new URLSearchParams(location.hash.slice(1)),f=Math.round(Number(q.get('ftp')));
+  if(q.get('ftp')!==null&&f>=80&&f<=600){WO.ftp=f;woSaveFtp()}
+  var w=q.get('w');
+  if(w!==null&&w.trim()!==''){
+    var p=parseWorkout(w);WO.text=w;
+    if(p.error)WO.err=p.error;
+    else WO.sel={name:q.get('name')||'Workout aus Sub9',text:w,steps:p.steps,total:p.total};
+  }
+}
+function woPick(id){
+  var w=WORKOUTS.filter(function(x){return x.id===id})[0];if(!w)return;
+  var p=parseWorkout(w.text);
+  WO.sel={name:w.name,text:w.text,steps:p.steps,total:p.total};WO.err='';render();
+}
+function woCustom(){
+  var ta=$('#woText'),text=ta?ta.value:WO.text,p=parseWorkout(text);
+  WO.text=text;
+  if(p.error)WO.err=p.error;
+  else{WO.sel={name:'Eigenes Workout',text:text,steps:p.steps,total:p.total};WO.err=''}
+  render();
+}
+function woInput(ev){
+  var t=ev.target;if(!t)return;
+  if(t.id==='woFtp'){var f=Math.round(Number(t.value));if(f>=80&&f<=600){WO.ftp=f;woSaveFtp()}}
+  else if(t.id==='woText')WO.text=t.value;
+}
+function woTop(steps,ftp){var top=1.3*ftp;steps.forEach(function(st){top=Math.max(top,woWatts(st,ftp,0),woWatts(st,ftp,1))});return top}
+function woTracePts(steps,total,ftp,trace){
+  var top=woTop(steps,ftp),pts=[],k,stp=Math.ceil(trace.length/1000);
+  for(k=0;k<trace.length;k+=stp){pts.push((total>0?Math.round(k/total*10000)/10:0)+','+Math.round((200-(trace[k]||0)/top*200)*10)/10)}
+  return pts.join(' ');
+}
+/* ---------- Fahrt: reine Funktionen ---------- */
+var RIDE=null;
+function stepStarts(steps){var out=[],t=0;steps.forEach(function(st){out.push(t);t+=st.dur});return out}
+function rideTargetAt(steps,ftp,el,bias){
+  var starts=stepStarts(steps),total=0,i,st,frac,v;
+  steps.forEach(function(s){total+=s.dur});
+  if(el<0)el=0;
+  if(el>=total)return {i:-1,w:0,remain:0};
+  for(i=0;i<steps.length;i++){if(starts[i]<=el&&el<starts[i]+steps[i].dur)break}
+  st=steps[i];frac=(el-starts[i])/st.dur;
+  v=st.lo+(st.hi-st.lo)*frac;if(!st.abs)v=v*ftp;
+  v=Math.round(v*bias);
+  return {i:i,w:Math.min(2000,Math.max(0,v)),remain:starts[i]+st.dur-el};
+}
+function rideStats(samples,ftp){
+  var n=samples.length,out={dur:n,avg:0,np:0,if:0,tss:0,kj:0,avgHr:null,maxHr:null,avgCad:null,dist:0};
+  if(!n)return out;
+  var ps=samples.map(function(s){return s.p||0}),sum=0,i,j,ws,q=0,cnt=0,npRaw,ifRaw,hrs=[],cads=[],d=0,hrSum=0,cSum=0;
+  ps.forEach(function(p){sum+=p});
+  var mean=sum/n;out.avg=Math.round(mean);npRaw=mean;
+  if(n>=30){
+    for(i=29;i<n;i++){ws=0;for(j=i-29;j<=i;j++)ws+=ps[j];q+=Math.pow(ws/30,4);cnt++}
+    npRaw=Math.pow(q/cnt,0.25);
+  }
+  out.np=Math.round(npRaw);
+  ifRaw=npRaw/ftp;out.if=Math.round(ifRaw*100)/100;
+  out.tss=Math.round(n*npRaw*ifRaw/(ftp*3600)*100);
+  out.kj=Math.round(sum/1000);
+  samples.forEach(function(s){
+    if(s.hr!=null){hrs.push(s.hr);hrSum+=s.hr;if(out.maxHr==null||s.hr>out.maxHr)out.maxHr=s.hr}
+    if(s.c!=null&&s.c>0){cads.push(s.c);cSum+=s.c}
+    d+=(s.s||0)/3.6;
+  });
+  if(hrs.length)out.avgHr=Math.round(hrSum/hrs.length);
+  if(cads.length)out.avgCad=Math.round(cSum/cads.length);
+  out.dist=Math.round(d);
+  return out;
+}
+
+/* ---------- Fahrt: Steuerung ---------- */
+function rideRound(v){return v==null?null:Math.round(v)}
+function ridePow(){
+  var ps=RIDE.samples.slice(-3).map(function(s){return s.p}).filter(function(v){return v!=null});
+  if(ps.length)return String(Math.round(ps.reduce(function(a,b){return a+b},0)/ps.length));
+  return indFmt(IND.live.power);
+}
+function rideStart(){
+  if(!WO.sel||(RIDE&&!RIDE.done))return;
+  RIDE={name:WO.sel.name,text:WO.sel.text,steps:WO.sel.steps,total:WO.sel.total,ftp:WO.ftp,bias:1,el:0,run:false,done:false,startTs:null,lastTick:null,samples:[],lastSent:null,i:0,timer:null};
+  RIDE.timer=setInterval(rideTick,1000);
+  rideToggle();
+  SAVED=null;
+  rideSave();
+  rideWake();
+  render();window.scrollTo(0,0);
+}
+function rideToggle(){
+  if(!RIDE||RIDE.done)return;
+  var first=RIDE.startTs==null;
+  RIDE.run=!RIDE.run;
+  if(RIDE.run){RIDE.lastTick=Date.now();if(first)RIDE.startTs=Math.floor(Date.now()/1000)}
+  indLog(RIDE.run?(first?'Fahrt gestartet':'Weiter'):'Pause');
+  render();
+}
+function rideSend(w){
+  if(!IND.ctrl&&!IND.ctrlReq){IND.ctrlReq=true;indWrite(new Uint8Array([0x00]))}
+  indWrite(ftmsTargetPowerCmd(w));
+  if(RIDE)RIDE.lastSent=w;
+  IND.erg=true;IND.ergW=w;
+}
+function rideTick(){
+  if(!RIDE||RIDE.done)return;
+  var now=Date.now(),R=RIDE,tg;
+  if(R.run){R.el+=Math.min(5,(now-R.lastTick)/1000);R.lastTick=now}
+  tg=rideTargetAt(R.steps,R.ftp,R.el,R.bias);
+  if(tg.i===-1){rideFinish();return}
+  if(R.run)R.samples.push({ts:Math.floor(now/1000),p:rideRound(IND.live.power),c:rideRound(IND.live.cadence),hr:rideRound(IND.live.hr),s:IND.live.speed==null?null:Math.round(IND.live.speed*10)/10,t:tg.w});
+  if(R.run&&R.samples.length%15===0)rideSave();
+  if(tg.i!==R.i){R.i=tg.i;render()}
+  if(R.run&&IND.trainer&&IND.trainer.cp&&tg.w!==R.lastSent)rideSend(tg.w);
+  rideLive();
+}
+function rideBias(d){
+  if(!RIDE||RIDE.done)return;
+  RIDE.bias=Math.min(1.5,Math.max(0.5,Math.round((RIDE.bias+d)*100)/100));
+  if(RIDE.run&&IND.trainer&&IND.trainer.cp)rideSend(rideTargetAt(RIDE.steps,RIDE.ftp,RIDE.el,RIDE.bias).w);
+  render();
+}
+function rideSkip(){
+  if(!RIDE||RIDE.done)return;
+  var cur=rideTargetAt(RIDE.steps,RIDE.ftp,RIDE.el,RIDE.bias).i,starts=stepStarts(RIDE.steps);
+  if(cur+1>=RIDE.steps.length){rideFinish();return}
+  RIDE.el=starts[cur+1];
+  render();
+}
+function rideFinish(){
+  if(!RIDE||RIDE.done)return;
+  RIDE.run=false;RIDE.done=true;clearInterval(RIDE.timer);
+  rideSave();
+  RIDE.lock&&RIDE.lock.release().catch(function(){});
+  if(IND.trainer&&IND.trainer.cp){indWrite(new Uint8Array([0x01]));IND.erg=false;IND.ctrl=false;IND.ctrlReq=false;IND.ergW=null}
+  indLog('Fahrt beendet');
+  render();window.scrollTo(0,0);
+}
+function rideStop(){if(!confirm('Fahrt beenden?'))return;rideFinish()}
+function rideClose(){rideDropKey();RIDE=null;render()}
+function rideLive(){
+  if(!RIDE||RIDE.done)return;
+  var R=RIDE,cur=rideTargetAt(R.steps,R.ftp,R.el,R.bias);
+  function set(id,t){var e=$('#'+id);if(e)e.textContent=String(t)}
+  set('rdEl',fmtClock(R.el));set('rdTgt',cur.w);set('rdPow',ridePow());set('rdRem',fmtClock(cur.remain));
+  set('rdCad',indFmt(IND.live.cadence));set('rdHr',indFmt(IND.live.hr));
+  var line=$('#wogNow'),x=R.total>0?Math.round(R.el/R.total*10000)/10:0;
+  if(line){line.setAttribute('x1',x);line.setAttribute('x2',x)}
+  var tr=$('#rdTrace');
+  if(tr)tr.setAttribute('points',woTracePts(R.steps,R.total,R.ftp,R.samples.map(function(s){return s.p})));
+  indLive();
+}
+document.addEventListener('keydown',function(ev){
+  if(!RIDE||RIDE.done)return;
+  var tg=ev.target&&ev.target.tagName;
+  if(tg==='INPUT'||tg==='TEXTAREA')return;
+  if(ev.key===' '||ev.code==='Space'){
+    if(ev.repeat||tg==='BUTTON')return;
+    ev.preventDefault();rideToggle();
+  }
+  else if(ev.key==='ArrowUp'){ev.preventDefault();rideBias(0.05)}
+  else if(ev.key==='ArrowDown'){ev.preventDefault();rideBias(-0.05)}
+});
+
+/* ---------- Fahrt: FIT-Export (reine Funktionen) ---------- */
+var RIDE_KEY='sub9i.ride',SAVED=null;
+var FIT_E=0x00,FIT_U8=0x02,FIT_U16=0x84,FIT_U32=0x86,FIT_U32Z=0x8C;
+var F_FILE=[[0,1,FIT_E],[1,2,FIT_U16],[2,2,FIT_U16],[3,4,FIT_U32Z],[4,4,FIT_U32]];
+var F_EVENT=[[253,4,FIT_U32],[0,1,FIT_E],[1,1,FIT_E]];
+var F_REC=[[253,4,FIT_U32],[3,1,FIT_U8],[4,1,FIT_U8],[7,2,FIT_U16],[6,2,FIT_U16],[5,4,FIT_U32]];
+var F_LAP=[[253,4,FIT_U32],[2,4,FIT_U32],[7,4,FIT_U32],[8,4,FIT_U32],[9,4,FIT_U32],[11,2,FIT_U16],[15,1,FIT_U8],[16,1,FIT_U8],[17,1,FIT_U8],[19,2,FIT_U16],[0,1,FIT_E],[1,1,FIT_E],[25,1,FIT_E],[39,1,FIT_E]];
+var F_SESSION=[[253,4,FIT_U32],[2,4,FIT_U32],[7,4,FIT_U32],[8,4,FIT_U32],[9,4,FIT_U32],[11,2,FIT_U16],[16,1,FIT_U8],[17,1,FIT_U8],[18,1,FIT_U8],[20,2,FIT_U16],[34,2,FIT_U16],[35,2,FIT_U16],[36,2,FIT_U16],[25,2,FIT_U16],[26,2,FIT_U16],[0,1,FIT_E],[1,1,FIT_E],[5,1,FIT_E],[6,1,FIT_E]];
+var F_ACT=[[253,4,FIT_U32],[0,4,FIT_U32],[1,2,FIT_U16],[2,1,FIT_E],[3,1,FIT_E],[4,1,FIT_E],[5,4,FIT_U32]];
+function fitTs(unix){return unix-631065600}
+function fitCrc(bytes,crc0){
+  var T=[0x0000,0xCC01,0xD801,0x1400,0xF001,0x3C00,0x2800,0xE401,0xA001,0x6C00,0x7800,0xB401,0x5000,0x9C01,0x8801,0x4400],crc=crc0||0,i,b,t;
+  for(i=0;i<bytes.length;i++){
+    b=bytes[i];
+    t=T[crc&0xF];crc=(crc>>4)&0x0FFF;crc=crc^t^T[b&0xF];
+    t=T[crc&0xF];crc=(crc>>4)&0x0FFF;crc=crc^t^T[(b>>4)&0xF];
+  }
+  return crc;
+}
+function fitInvalid(bt){return bt===FIT_U16?0xFFFF:bt===FIT_U32?0xFFFFFFFF:bt===FIT_U32Z?0:0xFF}
+function fitWriteVal(out,v,size){for(var i=0;i<size;i++)out.push(Math.floor(v/Math.pow(256,i))&0xFF)}
+function fitDef(out,local,gnum,fields){
+  out.push(0x40|local,0,0,gnum&0xFF,(gnum>>8)&0xFF,fields.length);
+  fields.forEach(function(f){out.push(f[0],f[1],f[2])});
+}
+function fitRec(out,local,fields,vals){
+  out.push(local);
+  fields.forEach(function(f){
+    var inv=fitInvalid(f[2]),v=vals[f[0]];
+    if(v==null||isNaN(v))v=inv;
+    else{v=Math.round(v);if(v<0)v=0;if(inv>0&&v>=inv)v=inv-1}
+    fitWriteVal(out,v,f[1]);
+  });
+}
+/* FIT-Datei: Header (14 Byte), Datensaetze, End-CRC. Leere Samples -> null */
+function fitEncode(samples,stats,startTs){
+  if(!samples||!samples.length)return null;
+  if(startTs==null)startTs=samples[0].ts;
+  var last=samples[samples.length-1].ts,body=[],cum=0,i,s,header,hc,all,ec,ds;
+  fitDef(body,0,0,F_FILE);
+  fitRec(body,0,F_FILE,{0:4,1:255,2:1,3:1,4:fitTs(startTs)});
+  fitDef(body,1,21,F_EVENT);
+  fitRec(body,1,F_EVENT,{253:fitTs(startTs),0:0,1:0});
+  fitDef(body,2,20,F_REC);
+  for(i=0;i<samples.length;i++){
+    s=samples[i];cum+=(s.s||0)/3.6;
+    fitRec(body,2,F_REC,{253:fitTs(s.ts),3:s.hr,4:s.c,7:s.p,6:s.s==null?null:Math.round(s.s/3.6*1000),5:Math.round(cum*100)});
+  }
+  fitRec(body,1,F_EVENT,{253:fitTs(last),0:0,1:4});
+  fitDef(body,3,19,F_LAP);
+  fitRec(body,3,F_LAP,{253:fitTs(last),2:fitTs(startTs),7:(last-startTs+1)*1000,8:stats.dur*1000,9:stats.dist*100,11:stats.kj,15:stats.avgHr,16:stats.maxHr,17:stats.avgCad,19:stats.avg,0:9,1:1,25:2,39:6});
+  fitDef(body,4,18,F_SESSION);
+  fitRec(body,4,F_SESSION,{253:fitTs(last),2:fitTs(startTs),7:(last-startTs+1)*1000,8:stats.dur*1000,9:stats.dist*100,11:stats.kj,16:stats.avgHr,17:stats.maxHr,18:stats.avgCad,20:stats.avg,34:stats.np,35:Math.round(stats.tss*10),36:Math.round(stats.if*1000),25:0,26:1,0:8,1:1,5:2,6:6});
+  fitDef(body,5,34,F_ACT);
+  fitRec(body,5,F_ACT,{253:fitTs(last),0:stats.dur*1000,1:1,2:0,3:26,4:1,5:fitTs(last)-new Date(last*1000).getTimezoneOffset()*60});
+  ds=body.length;
+  header=[14,0x20,0x54,0x08,ds&0xFF,(ds>>8)&0xFF,(ds>>16)&0xFF,(ds>>24)&0xFF,0x2E,0x46,0x49,0x54];
+  hc=fitCrc(header);
+  header.push(hc&0xFF,(hc>>8)&0xFF);
+  all=header.concat(body);
+  ec=fitCrc(all);
+  all.push(ec&0xFF,(ec>>8)&0xFF);
+  return new Uint8Array(all);
+}
+/* ---------- Fahrt: Export, Speichern, Wiederherstellung ---------- */
+function fitDownload(samples,ftp,startTs){
+  var bytes=fitEncode(samples,rideStats(samples,ftp),startTs);
+  if(!bytes){indLog('Keine Daten für den Export');return}
+  var url=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'})),
+    d=new Date((startTs==null?samples[0].ts:startTs)*1000),p2=function(x){return (x<10?'0':'')+x},
+    a=document.createElement('a');
+  a.href=url;
+  a.download='sub9-indoor-'+d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'.fit';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  indLog('FIT-Datei gespeichert');
+}
+function rideFit(){if(RIDE)fitDownload(RIDE.samples,RIDE.ftp,RIDE.startTs)}
+function rideSave(){
+  if(!RIDE)return;
+  try{localStorage.setItem(RIDE_KEY,JSON.stringify({name:RIDE.name,ftp:RIDE.ftp,startTs:RIDE.startTs,samples:RIDE.samples,done:!!RIDE.done}))}catch(e){}
+}
+function rideDropKey(){try{localStorage.removeItem(RIDE_KEY)}catch(e){}}
+function rideRestore(){
+  var raw=null,d=null;
+  try{raw=localStorage.getItem(RIDE_KEY)}catch(e){}
+  if(!raw)return;
+  try{d=JSON.parse(raw)}catch(e){d=null}
+  if(d&&Array.isArray(d.samples)&&typeof d.startTs==='number'&&d.samples.length>=60&&!RIDE){
+    SAVED={name:String(d.name||'Workout'),ftp:(Number(d.ftp)>=80&&Number(d.ftp)<=600)?Number(d.ftp):WO.ftp,startTs:d.startTs,samples:d.samples,done:!!d.done};
+    return;
+  }
+  rideDropKey();
+}
+function rideWake(){
+  navigator.wakeLock&&navigator.wakeLock.request('screen').then(function(l){if(RIDE)RIDE.lock=l}).catch(function(){});
+}
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&RIDE&&!RIDE.done&&RIDE.run&&(!RIDE.lock||RIDE.lock.released))rideWake();
+});
+function savedHtml(){
+  if(!SAVED)return '';
+  var when=new Intl.DateTimeFormat('de-DE',{dateStyle:'short',timeStyle:'short'}).format(new Date(SAVED.startTs*1000));
+  return '<div class="notice"><p>'+(SAVED.done?'Deine letzte Fahrt vom ':'Es gibt eine abgebrochene Fahrt vom ')+h(when)+' ('+fmtClock(SAVED.samples.length)+').</p></div>'+
+    '<div class="row"><button type="button" class="btn primary" data-act="savedFit">Als FIT speichern</button><button type="button" class="btn" data-act="savedDrop">Verwerfen</button></div>';
+}
+
+/* ---------- Fahrt: Ansicht ---------- */
+function rideHtml(){
+  var R=RIDE,cur=rideTargetAt(R.steps,R.ftp,R.el,R.bias),st=cur.i>=0?R.steps[cur.i]:null,
+    nxi=cur.i+1,nx=cur.i>=0&&nxi<R.steps.length?R.steps[nxi]:null,starts=stepStarts(R.steps);
+  var o='<div class="panel ride"><div class="row"><h3>'+h(R.name)+'</h3><p class="in-st"><span id="rdEl">'+fmtClock(R.el)+'</span> / '+fmtClock(R.total)+'</p></div>';
+  if(!(IND.trainer&&IND.trainer.cp))o+='<div class="notice"><p>Trainer nicht verbunden – die Watt werden gerade nicht gesteuert.</p></div>';
+  o+='<div class="rd-big">'+
+    '<div class="rd-b"><span>Ziel</span><b id="rdTgt">'+cur.w+'</b><small>W</small></div>'+
+    '<div class="rd-b"><span>Leistung (3 s)</span><b id="rdPow">'+ridePow()+'</b><small>W</small></div>'+
+    '<div class="rd-b"><span>Intervall</span><b id="rdRem">'+fmtClock(cur.remain)+'</b></div>'+
+    '</div>';
+  o+='<div class="rd-sub"><span>Trittfrequenz <b id="rdCad">'+indFmt(IND.live.cadence)+'</b> rpm</span><span>Puls <b id="rdHr">'+indFmt(IND.live.hr)+'</b> bpm</span><span>Intensität <b>'+Math.round(R.bias*100)+' %</b></span></div>';
+  if(st)o+='<p class="in-st">'+zoneOf(stepFrac(st,R.ftp)).l+' · '+woPctTxt(st)+'</p>';
+  if(nx)o+='<p class="note">Als Nächstes: '+fmtClock(nx.dur)+' · '+woPctTxt(nx)+' · '+rideTargetAt(R.steps,R.ftp,starts[nxi],R.bias).w+' W</p>';
+  else o+='<p class="note">Letztes Intervall</p>';
+  o+=woGraph(R.steps,R.total,R.ftp,{progress:R.el,id:'wogRide',trace:R.samples.map(function(s){return s.p})});
+  o+='<div class="row"><button type="button" class="btn primary" data-act="rideToggle">'+(R.run?'Pause':'Weiter')+'</button>'+
+    '<button type="button" class="btn" data-act="rideBias" data-v="-0.05">−5 %</button>'+
+    '<button type="button" class="btn" data-act="rideBias" data-v="0.05">+5 %</button>'+
+    '<button type="button" class="btn" data-act="rideSkip">Intervall überspringen</button>'+
+    '<button type="button" class="btn" data-act="rideStop">Beenden</button></div>'+
+    '<p class="note">Leertaste: Pause/Weiter · Pfeil hoch/runter: Intensität ±5 %</p></div>';
+  return o;
+}
+function summaryHtml(){
+  var R=RIDE,st=rideStats(R.samples,R.ftp),v=function(x){return x==null?'–':x};
+  function tile(k,val,unit){return '<div class="tile"><span class="k">'+k+'</span><span class="v">'+val+(unit?'<small>'+unit+'</small>':'')+'</span></div>'}
+  var o='<div class="panel ride"><h3>Fahrt beendet: '+h(R.name)+'</h3><div class="tiles">'+
+    tile('Dauer',fmtClock(st.dur))+
+    tile('Ø Leistung',v(st.avg),'W')+
+    tile('NP',v(st.np),'W')+
+    tile('IF',st.if.toFixed(2).replace('.',','))+
+    tile('TSS',v(st.tss))+
+    tile('Arbeit',v(st.kj),'kJ')+
+    tile('Ø Puls',v(st.avgHr),st.avgHr==null?'':'bpm')+
+    tile('max. Puls',v(st.maxHr),st.maxHr==null?'':'bpm')+
+    tile('Ø Trittfrequenz',v(st.avgCad),st.avgCad==null?'':'rpm')+
+    tile('Distanz',nf1.format(st.dist/1000),'km')+
+    '</div>';
+  if(R.samples.length<60)o+='<p class="note">Sehr kurze Fahrt.</p>';
+  o+=woGraph(R.steps,R.total,R.ftp,{trace:R.samples.map(function(s){return s.p}),id:'wogSum'});
+  o+='<div class="row"><button type="button" class="btn primary" data-act="rideFit">FIT-Datei herunterladen</button><button type="button" class="btn" data-act="rideClose">Neues Workout</button></div>'+
+    '<p class="note">Hochladen: Garmin Connect im Browser → <a href="https://connect.garmin.com/modern/import-data" target="_blank" rel="noopener">Daten importieren</a>. Danach sieht Sub9 die Fahrt automatisch.</p></div>';
+  return o;
+}
+
+/* ---------- Ansicht ---------- */
 function renderIndoor(){
   var el=$('#view-indoor');if(!el)return;
-  var T=IND.trainer,R=IND.hr,v=indVals();
-  var cpOk=!!(T&&T.cp),ergDis=cpOk?'':' disabled';
-  var o='<div><p class="eyebrow">Training</p><h2 class="vh">Indoor-Trainer</h2></div>';
+  var head='<div><p class="eyebrow">Training</p><h2 class="vh">Indoor-Trainer</h2></div>';
+  if(RIDE&&!RIDE.done)el.innerHTML=head+rideHtml()+devicesHtml()+logHtml();
+  else if(RIDE)el.innerHTML=head+summaryHtml()+logHtml();
+  else el.innerHTML=head+savedHtml()+devicesHtml()+workoutHtml()+freeErgHtml()+logHtml();
+}
+function devicesHtml(){
+  var T=IND.trainer,R=IND.hr,v=indVals(),o='';
   if(!BT_OK)o+='<div class="notice"><p>Bluetooth ist hier nicht verfügbar. Nutze Chrome oder Edge am Laptop. Safari und Firefox unterstützen Web Bluetooth nicht.</p></div>';
   if(IND.blocked)o+='<div class="notice"><p>Der Browser blockiert Bluetooth auf dieser Seite. Prüfe in den Website-Einstellungen von Chrome, ob Bluetooth erlaubt ist.</p></div>';
   o+='<div class="panel"><h3>Smart-Trainer</h3><p class="in-st">'+(IND.busy==='trainer'?'verbindet …':T?'verbunden mit <b>'+h(T.device.name||'Unbekannt')+'</b>':'nicht verbunden')+'</p>'+
@@ -261,7 +730,40 @@ function renderIndoor(){
     '<div class="tile"><span class="k">Geschwindigkeit</span><span class="v"><span id="inSpd">'+v.inSpd+'</span><small>km/h</small></span></div>'+
     '<div class="tile"><span class="k">Puls</span><span class="v"><span id="inHr">'+v.inHr+'</span><small>bpm</small></span></div>'+
     '</div>';
-  o+='<div class="panel"><h3>ERG-Test</h3><p class="explain">Setzt eine feste Wattzahl. Der Trainer passt den Widerstand automatisch an, egal wie schnell du trittst.</p>'+
+  return o;
+}
+function workoutHtml(){
+  var o='<div class="panel wo-panel"><h3>Workout</h3>'+
+    '<div class="row"><label for="woFtp">FTP</label><input id="woFtp" type="number" min="80" max="600" step="1" class="dt-in" style="width:90px" value="'+h(WO.ftp)+'"><span>W</span></div>'+
+    '<div class="wo-list">';
+  WORKOUTS.forEach(function(w){
+    var p=parseWorkout(w.text),on=!!WO.sel&&WO.sel.name===w.name;
+    o+='<button type="button" class="wo-card" data-act="woPick" data-v="'+h(w.id)+'" aria-pressed="'+(on?'true':'false')+'"><b>'+h(w.name)+'</b><span>'+fmtClock(p.total)+' · Ø '+woAvg(p.steps,WO.ftp)+' % FTP</span>'+woGraph(p.steps,p.total,WO.ftp,{})+'</button>';
+  });
+  o+='</div>'+
+    '<details'+(WO.err?' open':'')+'><summary>Eigenes Workout</summary>'+
+    '<textarea id="woText" class="dt-in" aria-label="Eigenes Workout">'+h(WO.text)+'</textarea>'+
+    '<p class="note">Beispiel: 10m 50%, 3x(12m 90%, 4m 55%), 10m 50%. Prozent beziehen sich auf deine FTP, alternativ Watt wie 200W. Rampen: 10m 50-70%.</p>'+
+    '<div class="row"><button type="button" class="btn" data-act="woCustom">Übernehmen</button></div>'+
+    (WO.err?'<p class="err">'+h(WO.err)+'</p>':'')+
+    '</details>';
+  if(WO.sel){
+    var sl=WO.sel,lis=sl.steps.slice(0,40).map(function(st){
+      return '<li>'+fmtClock(st.dur)+' · '+woPctTxt(st)+' · '+woWattTxt(st)+' · '+zoneOf(stepFrac(st,WO.ftp)).l+'</li>';
+    });
+    if(sl.steps.length>40)lis.push('<li>… und '+(sl.steps.length-40)+' weitere</li>');
+    o+='<h3>'+h(sl.name)+'</h3>'+
+      '<p class="explain">Dauer '+fmtClock(sl.total)+' · Ø '+woAvg(sl.steps,WO.ftp)+' % FTP</p>'+
+      woGraph(sl.steps,sl.total,WO.ftp,{id:'wogSel'})+
+      '<ol class="wo-steps">'+lis.join('')+'</ol>'+
+      '<div class="row"><button type="button" class="btn primary" data-act="woStart">Workout starten</button></div>';
+  }
+  o+='</div>';
+  return o;
+}
+function freeErgHtml(){
+  var T=IND.trainer,cpOk=!!(T&&T.cp),ergDis=cpOk?'':' disabled',o='';
+  o+='<div class="panel"><h3>Freies ERG</h3><p class="explain">Setzt eine feste Wattzahl. Der Trainer passt den Widerstand automatisch an, egal wie schnell du trittst.</p>'+
     '<div class="row"><button type="button" class="ibtn" data-act="inStep" data-v="-10" aria-label="10 Watt weniger"'+ergDis+'>−10</button>'+
     '<input id="inTarget" type="number" min="50" max="1000" step="5" inputmode="numeric" class="dt-in" value="'+h(isFinite(IND.target)?String(IND.target):'')+'" aria-label="Zielleistung in Watt">'+
     '<button type="button" class="ibtn" data-act="inStep" data-v="10" aria-label="10 Watt mehr"'+ergDis+'>+10</button>'+
@@ -269,16 +771,20 @@ function renderIndoor(){
     '<button type="button" class="btn primary" data-act="inErg"'+ergDis+'>'+(IND.erg?'Ziel senden':'ERG starten')+'</button>'+
     (IND.erg?'<button type="button" class="btn" data-act="inErgOff"'+ergDis+'>ERG beenden</button>':'')+'</div>'+
     '<p class="in-st">'+(IND.erg?'ERG aktiv: <b>'+h(IND.ergW)+' W</b>':'ERG aus')+'</p></div>';
+  return o;
+}
+function logHtml(){
+  var o='';
   o+='<div class="panel"><h3>Protokoll</h3>'+
     (IND.log.length?'<ul class="in-log">'+IND.log.map(function(e){return '<li><span>'+h(e.t)+'</span>'+h(e.m)+'</li>'}).join('')+'</ul>':'<p class="muted">Noch keine Ereignisse.</p>')+
     '<p class="note">Schließe Zwift und andere Apps, die mit der Rolle verbunden sind. Die Rolle kann nur mit einer App gleichzeitig verbunden sein.</p></div>';
-  el.innerHTML=o;
+  return o;
 }
 
 /* ---------- Events ---------- */
 document.addEventListener('click',function(ev){
   var t=ev.target.closest('[data-act]');if(!t)return;var act=t.dataset.act;
-  var ae=document.activeElement;if(ae&&ae.id==='inTarget'&&ae!==t)ae.blur();
+  var ae=document.activeElement;if(ae&&DEFER_IDS.indexOf(ae.id)>=0&&ae!==t)ae.blur();
   if(act==='inConnT')return indConnTrainer();
   if(act==='inConnH')return indConnHr();
   if(act==='inDiscT')return indDisc('trainer');
@@ -286,8 +792,22 @@ document.addEventListener('click',function(ev){
   if(act==='inErg')return indErg();
   if(act==='inErgOff')return indErgOff();
   if(act==='inStep')return indStep(Number(t.dataset.v));
+  if(act==='woPick')return woPick(t.dataset.v);
+  if(act==='woCustom')return woCustom();
+  if(act==='woStart')return rideStart();
+  if(act==='rideToggle')return rideToggle();
+  if(act==='rideBias')return rideBias(Number(t.dataset.v));
+  if(act==='rideSkip')return rideSkip();
+  if(act==='rideStop')return rideStop();
+  if(act==='rideClose')return rideClose();
+  if(act==='rideFit')return rideFit();
+  if(act==='savedFit'){if(SAVED)fitDownload(SAVED.samples,SAVED.ftp,SAVED.startTs);return}
+  if(act==='savedDrop'){rideDropKey();SAVED=null;render();return}
 });
 document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='inTarget')IND.target=ev.target.value===''?NaN:Number(ev.target.value)});
+document.addEventListener('input',woInput);
+woInit();
+rideRestore();
 render();
 })();
 </script>
