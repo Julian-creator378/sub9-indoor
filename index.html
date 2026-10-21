@@ -101,94 +101,104 @@ textarea.dt-in{width:100%;min-height:70px;resize:vertical;font-family:ui-monospa
 .scene svg{display:block;width:100%;height:100%}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .scene svg{filter:brightness(.9)}}
 :root[data-theme="dark"] .scene svg{filter:brightness(.9)}
-.scene .o{stroke:#2b1d14;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
-.scene .o2{stroke:#2b1d14;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.scene .o{stroke:#2b1d14;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.scene .o2{stroke:#2b1d14;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
 #scVeil{transition:opacity 1.5s ease;pointer-events:none}
-.bubble{position:absolute;right:12%;top:8%;max-width:220px;background:#fff;color:#2b1d14;border:2px solid #2b1d14;border-radius:16px;padding:6px 12px;font:700 18px/1.2 var(--f-disp);text-align:center;opacity:0;visibility:hidden;transform:scale(.5);transform-origin:85% 100%;transition:opacity .18s,transform .18s,visibility 0s .18s;pointer-events:none;z-index:2}
+.bubble{position:absolute;right:var(--bright,12%);top:8%;max-width:220px;background:#fff;color:#2b1d14;border:2px solid #2b1d14;border-radius:16px;padding:6px 12px;font:700 18px/1.2 var(--f-disp);text-align:center;opacity:0;visibility:hidden;transform:scale(.5);transform-origin:85% 100%;transition:opacity .18s,transform .18s,visibility 0s .18s;pointer-events:none;z-index:2}
 .bubble.on{opacity:1;visibility:visible;transform:none;transition:opacity .18s,transform .18s;animation:sc-pop .28s cubic-bezier(.3,1.5,.5,1)}
 .bubble::after{content:"";position:absolute;bottom:-9px;right:clamp(22px,var(--tail,40px),calc(100% - 38px));width:14px;height:14px;background:#fff;border-right:2px solid #2b1d14;border-bottom:2px solid #2b1d14;transform:rotate(45deg)}
 @keyframes sc-pop{0%{opacity:0;transform:scale(.4)}100%{opacity:1;transform:scale(1)}}
 .sc-set{gap:8px}
+.view>.scene,.view>.sc-set{grid-column:1/-1}
 .sc-set .btn{padding:5px 10px;font-size:13px}
 .sc-set .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 /* Gecko: Dauerbewegung */
-.scene .gk{transform-origin:100px 131px}
-.gk-tail{transform-origin:150px 104px;animation:gk-tail 3s ease-in-out infinite}
-@keyframes gk-tail{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
-.gk-body{transform-origin:100px 126px;animation:gk-breathe 2.5s ease-in-out infinite}
-@keyframes gk-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.02)}}
-.gk-head{transform-origin:62px 92px;transition:transform .6s ease}
-.gk-arm{transform-origin:34px 102px}
+.scene .gk{transform-origin:130px 110px}
+.gk-fore{transform-origin:160px 98px}
+.gk-tail{transform-origin:170px 90px;animation:gk-curl 7s ease-in-out infinite}
+@keyframes gk-curl{0%,100%{transform:rotate(0)}50%{transform:rotate(2.5deg)}}
+.gk-tip{animation:gk-tipcurl 5s ease-in-out infinite}
+@keyframes gk-tipcurl{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+.gk-body{transform-origin:120px 104px;animation:gk-breathe 3s ease-in-out infinite}
+@keyframes gk-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.03)}}
+.gk-head{transform-origin:78px 84px;transition:transform .6s ease}
+.gk-arm{transform-origin:92px 84px}
 .gk-eye{transform-box:fill-box;transform-origin:center}
+.gk-pupil{transform-box:fill-box;transform-origin:center}
 .gk-lids>*{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0)}
-.gk-tongue{transform-origin:24px 80px;opacity:0;transform:scaleX(0)}
-.gk-cricket{opacity:0;transform:translate(-110px,124px)}
+.gk-tongue{transform-origin:24px 87px;opacity:0;transform:scaleX(0)}
+.gk-jaw{transform-origin:68px 84px}
+.gk-cricket{opacity:0;transform:translate(-130px,110px)}
 .gk-band{opacity:0}
-.gk-thumb{opacity:0}
-.gk-watch{transform-box:fill-box;transform-origin:center}
-.gk-zzz text{opacity:0;font:900 16px Arial,Helvetica,sans-serif;fill:#fff;stroke:#2b1d14;stroke-width:3;paint-order:stroke;stroke-linejoin:round}
-/* Einmal-Posen */
+.gk-zzz text{opacity:0;font:700 12px Arial,Helvetica,sans-serif;fill:#aab1c2}
+/* Einmal-Posen (Verhalten echter Leopardgeckos) */
 .gk.blink .gk-lids>*{animation:gk-blink .15s ease-in-out}
 @keyframes gk-blink{0%,100%{transform:scaleY(0)}50%{transform:scaleY(1)}}
-.gk.wave .gk-arm{animation:gk-wave 1.6s ease-in-out}
-@keyframes gk-wave{0%,100%{transform:rotate(0)}12%{transform:rotate(100deg)}24%{transform:rotate(124deg)}36%{transform:rotate(92deg)}48%{transform:rotate(124deg)}60%{transform:rotate(92deg)}72%{transform:rotate(124deg)}86%{transform:rotate(100deg)}}
-.gk.thumbs .gk-arm{animation:gk-thumbs 2s ease-in-out}
-@keyframes gk-thumbs{0%,100%{transform:rotate(0)}16%{transform:rotate(104deg)}28%{transform:rotate(98deg)}40%{transform:rotate(106deg)}52%{transform:rotate(98deg)}84%{transform:rotate(102deg)}}
-.gk.thumbs .gk-thumb{animation:gk-thumb 2s}
-@keyframes gk-thumb{0%,10%{opacity:0}16%,84%{opacity:1}92%,100%{opacity:0}}
-.gk.thumbs .gk-toes,.gk.cheer .gk-toes{animation:gk-toes 2s}
-.gk.cheer .gk-toes{animation:none;opacity:0}
-@keyframes gk-toes{0%,10%{opacity:1}16%,84%{opacity:0}92%,100%{opacity:1}}
-.gk.jump{animation:gk-jump 1.2s ease-in-out}
-@keyframes gk-jump{0%,46%,100%{transform:none}8%,54%{transform:scale(1.08,.9)}22%,70%{transform:translateY(-30px) scale(.96,1.05)}38%,88%{transform:scale(1.1,.88)}}
-.gk.wow .gk-eye{animation:gk-wow-eye 1.5s ease-in-out}
-@keyframes gk-wow-eye{0%,100%{transform:scale(1)}15%,70%{transform:scale(1.15)}}
+.gk.wave .gk-head{animation:gk-look 1.6s ease-in-out}
+@keyframes gk-look{0%,100%{transform:none}15%{transform:rotate(9deg) translate(0,-2px)}32%{transform:rotate(9deg) translate(3px,-1px) skewY(-4deg)}50%{transform:rotate(5deg) translate(0,-1px) skewY(4deg)}68%{transform:rotate(10deg) translate(2px,-2px) skewY(-4deg)}85%{transform:rotate(4deg)}}
+.gk.wave .gk-arm{animation:gk-legup 1.6s ease-in-out}
+@keyframes gk-legup{0%,100%{transform:rotate(0)}20%{transform:rotate(38deg)}38%{transform:rotate(26deg)}56%{transform:rotate(38deg)}78%{transform:rotate(0)}}
+.gk.thumbs .gk-head{animation:gk-nod 2s ease-in-out}
+@keyframes gk-nod{0%,100%{transform:none}15%,45%{transform:rotate(-7deg) translate(0,2px)}30%,60%{transform:rotate(3deg)}}
+.gk.jump .gk-fore{animation:gk-rise 1.2s ease-in-out}
+@keyframes gk-rise{0%,45%,100%{transform:rotate(0)}20%,70%{transform:rotate(6.5deg)}}
+.gk.jump .gk-tip{animation:gk-twitch 1.2s ease-in-out}
+@keyframes gk-twitch{0%,100%{transform:rotate(0)}15%{transform:rotate(16deg)}30%{transform:rotate(-14deg)}45%{transform:rotate(12deg)}60%{transform:rotate(-10deg)}75%{transform:rotate(8deg)}}
 .gk.wow .gk-head{animation:gk-wow-head 1.5s ease-in-out}
-@keyframes gk-wow-head{0%,100%{transform:none}15%,70%{transform:rotate(7deg) translate(2px,-2px)}}
-.gk.tap .gk-arm{animation:gk-tap 1.8s ease-in-out}
-@keyframes gk-tap{0%,100%{transform:rotate(0)}16%{transform:rotate(100deg)}26%{transform:rotate(90deg)}32%{transform:rotate(100deg)}42%{transform:rotate(90deg)}48%{transform:rotate(100deg)}58%{transform:rotate(90deg)}64%{transform:rotate(100deg)}86%{transform:rotate(100deg)}}
-.gk.tap .gk-watch{animation:gk-wpulse 1.8s ease-in-out}
-@keyframes gk-wpulse{0%,16%,100%{transform:scale(1)}26%,42%,58%{transform:scale(1.45)}32%,48%,64%{transform:scale(1.1)}}
+@keyframes gk-wow-head{0%,100%{transform:none}15%,70%{transform:rotate(9deg) translate(1px,-3px)}}
+.gk.wow .gk-eye{animation:gk-wow-eye 1.5s ease-in-out}
+@keyframes gk-wow-eye{0%,100%{transform:scale(1)}15%,70%{transform:scale(1.1)}}
+.gk.wow .gk-pupil{animation:gk-wow-pupil 1.5s ease-in-out}
+@keyframes gk-wow-pupil{0%,100%{transform:scaleX(1)}15%,70%{transform:scaleX(2.6)}}
+.gk.tap .gk-tail{animation:gk-wag 1.8s ease-in-out}
+@keyframes gk-wag{0%,100%{transform:rotate(0)}10%{transform:rotate(-12deg)}20%{transform:rotate(12deg)}30%{transform:rotate(-12deg)}40%{transform:rotate(12deg)}50%{transform:rotate(-12deg)}60%{transform:rotate(12deg)}70%{transform:rotate(-9deg)}80%{transform:rotate(7deg)}}
 .gk.lick .gk-tongue{animation:gk-lick 1.2s ease-in-out}
-@keyframes gk-lick{0%{opacity:0;transform:rotate(120deg) scaleX(0)}10%{opacity:1;transform:rotate(120deg) scaleX(.25)}25%{opacity:1;transform:rotate(112deg) scaleX(1)}40%{opacity:1;transform:rotate(130deg) scaleX(1)}55%{opacity:1;transform:rotate(112deg) scaleX(1)}70%{opacity:1;transform:rotate(130deg) scaleX(1)}85%{opacity:1;transform:rotate(120deg) scaleX(.5)}100%{opacity:0;transform:rotate(120deg) scaleX(0)}}
+@keyframes gk-lick{0%{opacity:0;transform:rotate(128deg) scaleX(0)}12%{opacity:1;transform:rotate(128deg) scaleX(.3)}28%{opacity:1;transform:rotate(120deg) scaleX(1)}44%{opacity:1;transform:rotate(138deg) scaleX(1)}60%{opacity:1;transform:rotate(120deg) scaleX(1)}76%{opacity:1;transform:rotate(138deg) scaleX(.9)}90%{opacity:1;transform:rotate(128deg) scaleX(.3)}100%{opacity:0;transform:rotate(128deg) scaleX(0)}}
+.gk.lick .gk-head{animation:gk-lickhead 1.2s ease-in-out}
+@keyframes gk-lickhead{0%,100%{transform:none}25%,75%{transform:rotate(4deg)}}
 .gk.eat .gk-cricket{animation:gk-cricket 2.5s linear}
 @keyframes gk-cricket{
-0%{opacity:0;transform:translate(-112px,124px)}
-4%{opacity:1;transform:translate(-110px,124px)}
-10%{transform:translate(-100px,111px)}
-16%{transform:translate(-88px,124px)}
-22%{transform:translate(-88px,124px)}
-28%{transform:translate(-76px,109px)}
-34%{transform:translate(-62px,124px)}
-40%{transform:translate(-62px,124px)}
-46%{transform:translate(-50px,108px)}
-52%{transform:translate(-38px,124px)}
-56%{transform:translate(-38px,124px)}
-60%{transform:translate(-18px,92px)}
-64%{opacity:1;transform:translate(-4px,82px) scale(1)}
-68%{opacity:1;transform:translate(-4px,82px) scale(1)}
-74%{opacity:1;transform:translate(22px,82px) scale(.5)}
-76%,100%{opacity:0;transform:translate(26px,82px) scale(.1)}}
-.gk.eat .gk-tongue{animation:gk-eat-tongue 2.5s ease-in-out}
-@keyframes gk-eat-tongue{0%,60%{opacity:0;transform:scaleX(0)}62%{opacity:1;transform:scaleX(.2)}66%{opacity:1;transform:scaleX(1)}70%{opacity:1;transform:scaleX(1)}76%{opacity:1;transform:scaleX(.1)}78%,100%{opacity:0;transform:scaleX(0)}}
-.gk.eat .gk-head{animation:gk-chew 2.5s ease-in-out}
-@keyframes gk-chew{0%,78%{transform:none}82%,90%,98%{transform:translateY(3px)}86%,94%{transform:none}100%{transform:none}}
+0%{opacity:0;transform:translate(-132px,110px)}
+4%{opacity:1;transform:translate(-130px,110px)}
+10%{transform:translate(-118px,96px)}
+16%{transform:translate(-106px,110px)}
+22%{transform:translate(-106px,110px)}
+28%{transform:translate(-92px,94px)}
+34%{transform:translate(-78px,110px)}
+40%{transform:translate(-78px,110px)}
+46%{transform:translate(-62px,92px)}
+52%{transform:translate(-46px,110px)}
+56%{transform:translate(-46px,110px)}
+60%{transform:translate(-30px,98px)}
+64%{opacity:1;transform:translate(-14px,106px)}
+67%{opacity:1;transform:translate(-14px,106px)}
+69%,100%{opacity:0;transform:translate(-14px,106px)}}
+.gk.eat .gk-fore{animation:gk-stalk 2.5s ease-in-out}
+@keyframes gk-stalk{0%,15%{transform:translate(0,0)}35%{transform:translate(-4px,0)}52%{transform:translate(-6px,0)}60%{transform:translate(-14px,1px)}66%{transform:translate(-14px,1px)}74%,100%{transform:translate(0,0)}}
+.gk.eat .gk-head{animation:gk-pounce 2.5s ease-in-out}
+@keyframes gk-pounce{0%,15%{transform:none}40%,56%{transform:rotate(-7deg) translate(0,4px)}62%,66%{transform:rotate(-10deg) translate(0,5px)}74%,100%{transform:none}}
+.gk.eat .gk-jaw{animation:gk-jaw 2.5s ease-in-out}
+@keyframes gk-jaw{0%,58%{transform:rotate(0)}62%{transform:rotate(14deg)}66%{transform:rotate(0)}72%{transform:rotate(5deg)}77%{transform:rotate(0)}83%{transform:rotate(5deg)}88%{transform:rotate(0)}94%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+.gk.eat .gk-mouthin{animation:gk-mouthin 2.5s ease-in-out}
+@keyframes gk-mouthin{0%,58%{opacity:0}62%{opacity:1}66%{opacity:0}72%{opacity:.7}77%{opacity:0}83%{opacity:.7}88%{opacity:0}94%{opacity:.6}100%{opacity:0}}
+.gk.eat .gk-tail{animation:gk-wag-s 2.5s ease-in-out}
+@keyframes gk-wag-s{0%,12%,64%,100%{transform:rotate(0)}18%{transform:rotate(-7deg)}24%{transform:rotate(7deg)}30%{transform:rotate(-7deg)}36%{transform:rotate(7deg)}42%{transform:rotate(-7deg)}48%{transform:rotate(7deg)}54%{transform:rotate(-6deg)}60%{transform:rotate(5deg)}}
 /* Dauerzustände */
 .gk.sleep .gk-lids>*{transform:scaleY(1)}
-.gk.sleep .gk-head{transform:rotate(-6deg) translateY(4px)}
-.gk.sleep .gk-zzz text{animation:gk-z 3s ease-out infinite}
+.gk.sleep .gk-head{transform:rotate(-9deg) translate(1px,7px)}
+.gk.sleep .gk-body{animation-duration:4.8s}
+.gk.sleep .gk-zzz text{animation:gk-z 3.2s ease-out infinite}
 .gk.sleep .gk-zzz text:nth-child(2){animation-delay:1s}
 .gk.sleep .gk-zzz text:nth-child(3){animation-delay:2s}
-@keyframes gk-z{0%{opacity:0;transform:translate(0,6px)}20%,70%{opacity:1}100%{opacity:0;transform:translate(10px,-24px)}}
+@keyframes gk-z{0%{opacity:0;transform:translate(0,6px)}20%,65%{opacity:.85}100%{opacity:0;transform:translate(8px,-18px)}}
 .gk.band .gk-band{opacity:1}
-.gk-bt{transform-origin:88px 48px}
+.gk-bt{transform-origin:79px 60px}
 .gk.band .gk-bt{animation:gk-flutter .5s ease-in-out infinite alternate}
 .gk.band .gk-bt2{animation-delay:-.25s;animation-duration:.42s}
-@keyframes gk-flutter{0%{transform:rotate(-12deg)}100%{transform:rotate(12deg)}}
-.gk.cheer{animation:gk-cheer .9s ease-in-out infinite}
-@keyframes gk-cheer{0%,100%{transform:scale(1.06,.94)}40%{transform:translateY(-26px) scale(.96,1.05)}}
-.gk.cheer .gk-arm{animation:gk-armup .45s ease-in-out infinite alternate}
-@keyframes gk-armup{0%{transform:rotate(116deg)}100%{transform:rotate(138deg)}}
+@keyframes gk-flutter{0%{transform:rotate(-10deg)}100%{transform:rotate(12deg)}}
+.gk.cheer .gk-fore{animation:gk-rise .9s ease-in-out infinite}
+.gk.cheer .gk-head{animation:gk-nod .9s ease-in-out infinite}
+.gk.cheer .gk-tail{animation:gk-wag .7s ease-in-out infinite}
 .confetti{display:none}
 .scene.cheering .confetti{display:inline}
 .cf{transform-box:fill-box;transform-origin:center;animation:cf-fall 3.6s linear infinite}
@@ -324,6 +334,7 @@ function indConnTrainer(){
       IND.ctrl=false;IND.erg=false;IND.ergW=null;
       if(RIDE)RIDE.lastSent=null;
       indLog('Trainer verbunden: '+(dev.name||'Unbekannt'));
+      sceneEvent('trainer');
       if(!cp)indLog('Trainer erlaubt keine Steuerung');
     });
   }).catch(function(e){
@@ -345,6 +356,7 @@ function indConnHr(){
     return c.startNotifications().then(function(){
       IND.hr={device:dev,char:c};
       indLog('Pulsgurt verbunden: '+(dev.name||'Unbekannt'));
+      sceneEvent('hr');
     });
   }).catch(function(e){
     if(dev&&dev.gatt&&dev.gatt.connected){try{dev.gatt.disconnect()}catch(_){}}
@@ -506,13 +518,13 @@ function woInit(){
 function woPick(id){
   var w=WORKOUTS.filter(function(x){return x.id===id})[0];if(!w)return;
   var p=parseWorkout(w.text);
-  WO.sel={name:w.name,text:w.text,steps:p.steps,total:p.total};WO.err='';render();
+  WO.sel={name:w.name,text:w.text,steps:p.steps,total:p.total};WO.err='';sceneEvent('pick');render();
 }
 function woCustom(){
   var ta=$('#woText'),text=ta?ta.value:WO.text,p=parseWorkout(text);
   WO.text=text;
   if(p.error)WO.err=p.error;
-  else{WO.sel={name:'Eigenes Workout',text:text,steps:p.steps,total:p.total};WO.err=''}
+  else{WO.sel={name:'Eigenes Workout',text:text,steps:p.steps,total:p.total};WO.err='';sceneEvent('pick')}
   render();
 }
 function woInput(ev){
@@ -815,7 +827,7 @@ function summaryHtml(){
 
 /* ---------- Szene: Wüste mit Leopardgecko ---------- */
 var SC_KEY='sub9i.scene';
-var SCENE={el:null,refs:null,raf:0,off:0,v:0,last:0,mode:'',demo:false,cfg:{on:true,talk:true},
+var SCENE={el:null,refs:null,raf:0,off:0,v:0,last:0,mode:'',show:false,greeted:false,homeT:0,hIdle:0,cfg:{on:true,talk:true},
   band:false,sleep:false,cheer:false,veil:0,once:'',onceT:0,blinkT:0,bubT:0,bubClr:0,lastSay:0,
   nextBlink:0,t0:0,dn:-1,fit:'',vis:null,f:-1,sky:''};
 var GK=null;
@@ -832,7 +844,7 @@ function scRnd(a,b){return a+Math.random()*(b-a)}
 function scPick(a){return a[Math.floor(Math.random()*a.length)]}
 function scR(v){return Math.round(v*10)/10}
 /* Soll die Szene gerade im DOM stehen? Fahrt/Zusammenfassung: Einstellung; Startansicht: Vorschau */
-function scWant(){return RIDE?SCENE.cfg.on:SCENE.demo}
+function scWant(){return SCENE.cfg.on}
 function scSlot(){return scWant()?'<div id="sceneSlot"></div>':''}
 function scSetHtml(){
   var c=SCENE.cfg;
@@ -850,7 +862,7 @@ function scWave(fn){var d='',x;for(x=-10;x<=1010;x+=10)d+=(d?'L':'M')+x+' '+scR(
 function scTile(inner){return '<g>'+inner+'</g><g transform="translate(1000 0)">'+inner+'</g>'}
 function scMesa(cx,w,h){
   var b=262,t=b-h,l=cx-w/2,r=cx+w/2,m=cx;
-  return '<path d="M'+(l-22)+' '+b+'L'+(l-4)+' '+(b-h*0.5)+'L'+(l+2)+' '+(b-h*0.6)+'L'+(l+9)+' '+t+'L'+(r-9)+' '+t+'L'+(r-2)+' '+(b-h*0.6)+'L'+(r+4)+' '+(b-h*0.5)+'L'+(r+22)+' '+b+'Z" fill="#c98b74" stroke="#7d4f40" stroke-width="2.5" stroke-linejoin="round"/>'+
+  return '<path d="M'+(l-22)+' '+b+'L'+(l-4)+' '+(b-h*0.5)+'L'+(l+2)+' '+(b-h*0.6)+'L'+(l+9)+' '+t+'L'+(r-9)+' '+t+'L'+(r-2)+' '+(b-h*0.6)+'L'+(r+4)+' '+(b-h*0.5)+'L'+(r+22)+' '+b+'Z" fill="url(#scMesaG)" stroke="#7d4f40" stroke-width="1.5" stroke-linejoin="round"/>'+
     '<path d="M'+m+' '+t+'L'+(r-9)+' '+t+'L'+(r-2)+' '+(b-h*0.6)+'L'+(r+4)+' '+(b-h*0.5)+'L'+(r+22)+' '+b+'L'+m+' '+b+'Z" fill="#6b3a30" opacity=".2"/>'+
     '<path d="M'+(l+1)+' '+(b-h*0.38)+'L'+(r-1)+' '+(b-h*0.38)+'M'+(l-2)+' '+(b-h*0.2)+'L'+(r+2)+' '+(b-h*0.2)+'" stroke="#a96a55" stroke-width="2" opacity=".7" fill="none"/>';
 }
@@ -864,12 +876,12 @@ function scCactus(x,b,h,w,arms){
     fill+='<path d="M'+x+' '+yb+'L'+xo+' '+yb+'L'+xo+' '+(yb-a.u)+'" stroke-width="'+(w*0.78)+'"/>';
   }
   /* Rippen */
-  rib='<path d="M'+(x-w/4)+' '+(b-4)+'L'+(x-w/4)+' '+(b-h+4)+'" stroke="#8fd27e" stroke-width="2" opacity=".8"/>'+
-      '<path d="M'+(x+w/4)+' '+(b-4)+'L'+(x+w/4)+' '+(b-h+4)+'" stroke="#3f7f3a" stroke-width="2" opacity=".55"/>';
-  return '<g fill="none" stroke-linecap="round" stroke-linejoin="round">'+
-    '<g stroke="#2b1d14" stroke-width="'+(w+6)+'">'+out+'</g>'+
-    '<g stroke="#58a84a">'+fill+'</g>'+rib+'</g>'+
-    '<circle cx="'+x+'" cy="'+(b-h-2)+'" r="4.2" fill="#ff6f91" class="o2"/>';
+  rib='<path d="M'+(x-w/4)+' '+(b-4)+'L'+(x-w/4)+' '+(b-h+4)+'" stroke="#8cc67c" stroke-width="'+(w*0.28)+'" opacity=".5"/>'+
+      '<path d="M'+(x+w/3)+' '+(b-4)+'L'+(x+w/3)+' '+(b-h+4)+'" stroke="#2f6a34" stroke-width="'+(w*0.3)+'" opacity=".45"/>';
+  return '<g class="sc-cac" data-x="'+x+'"><g fill="none" stroke-linecap="round" stroke-linejoin="round">'+
+    '<g stroke="#2b1d14" stroke-width="'+(w+3)+'">'+out+'</g>'+
+    '<g stroke="#5b9a50">'+fill+'</g>'+rib+'</g>'+
+    '<circle cx="'+x+'" cy="'+(b-h-2)+'" r="4.2" fill="#ff6f91" class="o2"/></g>';
 }
 function scRock(x,b,r,c){
   return '<path d="M'+(x-r)+' '+b+'C'+(x-r)+' '+(b-r*0.8)+' '+(x-r*0.5)+' '+(b-r*1.15)+' '+(x+r*0.1)+' '+(b-r*1.1)+'C'+(x+r*0.8)+' '+(b-r*1.05)+' '+(x+r*1.05)+' '+(b-r*0.5)+' '+(x+r)+' '+b+'Z" fill="'+c+'" class="o"/>'+
@@ -887,102 +899,193 @@ function scConfetti(){
   }
   return '<g class="confetti">'+o+'</g>';
 }
+function scRng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function scBlob(cx,cy,r,rnd,sq){
+  var n=9,pts=[],i,a,rr,d,p0,p1,p2,p3;
+  for(i=0;i<n;i++){a=i/n*Math.PI*2+rnd()*0.45;rr=r*(0.72+rnd()*0.55);pts.push([cx+Math.cos(a)*rr*(sq||1.3),cy+Math.sin(a)*rr*0.78])}
+  d='M'+scR(pts[0][0])+' '+scR(pts[0][1]);
+  for(i=0;i<n;i++){
+    p0=pts[(i+n-1)%n];p1=pts[i];p2=pts[(i+1)%n];p3=pts[(i+2)%n];
+    d+='C'+scR(p1[0]+(p2[0]-p0[0])/6)+' '+scR(p1[1]+(p2[1]-p0[1])/6)+' '+scR(p2[0]-(p3[0]-p1[0])/6)+' '+scR(p2[1]-(p3[1]-p1[1])/6)+' '+scR(p2[0])+' '+scR(p2[1]);
+  }
+  return d+'Z';
+}
+function scSpots(x0,x1,y0,y1,n,rmin,rmax,seed){
+  var rnd=scRng(seed),d='',i;
+  for(i=0;i<n;i++)d+=scBlob(x0+rnd()*(x1-x0),y0+rnd()*(y1-y0),rmin+rnd()*(rmax-rmin),rnd);
+  return '<path d="'+d+'" fill="#2a2420" opacity=".88"/>';
+}
+/* Schwanz: Mittellinie (Bezier) mit Breitenverlauf, liegt bogenförmig seitlich auf dem Fels */
+var SC_TP=[[148,90],[222,84],[264,104],[224,118]];
+function scTailPt(t){
+  var u=1-t,P=SC_TP;
+  var x=u*u*u*P[0][0]+3*u*u*t*P[1][0]+3*u*t*t*P[2][0]+t*t*t*P[3][0];
+  var y=u*u*u*P[0][1]+3*u*u*t*P[1][1]+3*u*t*t*P[2][1]+t*t*t*P[3][1];
+  var dx=3*u*u*(P[1][0]-P[0][0])+6*u*t*(P[2][0]-P[1][0])+3*t*t*(P[3][0]-P[2][0]);
+  var dy=3*u*u*(P[1][1]-P[0][1])+6*u*t*(P[2][1]-P[1][1])+3*t*t*(P[3][1]-P[2][1]);
+  var l=Math.sqrt(dx*dx+dy*dy)||1,hw=(3.5+15*(1-Math.pow(t,2.1)))*Math.min(1,(t+0.14)/0.24);
+  return {x:x,y:y,nx:-dy/l,ny:dx/l,hw:hw};
+}
+function scTailPath(t0,t1){
+  var a=[],b=[],i,n=28,t,p;
+  for(i=0;i<=n;i++){t=t0+(t1-t0)*i/n;p=scTailPt(t);a.push(scR(p.x+p.nx*p.hw)+' '+scR(p.y+p.ny*p.hw));b.push(scR(p.x-p.nx*p.hw)+' '+scR(p.y-p.ny*p.hw))}
+  var e=scTailPt(t1);
+  return 'M'+a.join('L')+'L'+b[n]+'L'+b.slice(0,n).reverse().join('L')+'Z'+(t1>=1?'M'+scR(e.x+e.hw)+' '+scR(e.y)+'A'+scR(e.hw)+' '+scR(e.hw)+' 0 1 0 '+scR(e.x-e.hw)+' '+scR(e.y)+'A'+scR(e.hw)+' '+scR(e.hw)+' 0 1 0 '+scR(e.x+e.hw)+' '+scR(e.y)+'Z':'');
+}
+function scTailRings(t0,t1){
+  var d='',bands='',t,p,q,k;
+  for(t=0.06;t<0.97;t+=0.05){if(t<t0||t>t1)continue;p=scTailPt(t);
+    d+='M'+scR(p.x+p.nx*p.hw)+' '+scR(p.y+p.ny*p.hw)+'Q'+scR(p.x+p.ny*3)+' '+scR(p.y-p.nx*3)+' '+scR(p.x-p.nx*p.hw)+' '+scR(p.y-p.ny*p.hw)}
+  for(k=0;k<9;k++){t=0.1+k*0.1;if(t<t0||t+0.04>t1)continue;p=scTailPt(t);q=scTailPt(t+0.04);
+    bands+='M'+scR(p.x+p.nx*p.hw)+' '+scR(p.y+p.ny*p.hw)+'L'+scR(q.x+q.nx*q.hw)+' '+scR(q.y+q.ny*q.hw)+'L'+scR(q.x-q.nx*q.hw)+' '+scR(q.y-q.ny*q.hw)+'L'+scR(p.x-p.nx*p.hw)+' '+scR(p.y-p.ny*p.hw)+'Z'}
+  return '<path d="'+bands+'" fill="#f4e6b0" opacity=".2"/><path d="'+d+'" fill="none" stroke="#6b4e18" stroke-width=".8" opacity=".25"/>';
+}
+function scTailSpots(t0,t1,seed){
+  var rnd=scRng(seed),d='',i,t,p,off;
+  for(i=0;i<14;i++){t=t0+rnd()*(t1-t0);p=scTailPt(t);off=(rnd()*2-1)*p.hw*0.7;
+    d+=scBlob(p.x+p.nx*off,p.y+p.ny*off,1.2+3.2*Math.pow(1-t,0.8)*(0.55+rnd()*0.6),rnd,1.2)}
+  return '<path d="'+d+'" fill="#2a2420" opacity=".88"/>';
+}
+function scToes(ox,oy,ends){
+  var u='',o='',i,e,claws='';
+  for(i=0;i<ends.length;i++){e=ends[i];
+    u+='<path d="M'+ox+' '+oy+'L'+e[0]+' '+e[1]+'" stroke-width="3.6"/>';
+    o+='<path d="M'+ox+' '+oy+'L'+e[0]+' '+e[1]+'" stroke-width="2.2"/>';
+    claws+='<circle cx="'+(e[0]-0.4)+'" cy="'+e[1]+'" r=".85" fill="#2a2420"/>'}
+  return '<g fill="none" stroke-linecap="round"><g stroke="#8a6a22">'+u+'</g><g stroke="url(#gkLeg)">'+o+'</g></g>'+claws;
+}
+/* Gliedmaße aus Gelenkpunkten: sich verjüngend, mit Ellbogen/Knie */
+function scLimb(pts,ws){
+  var o='',f='',i,a,b;
+  for(i=0;i<pts.length-1;i++){a=pts[i];b=pts[i+1];
+    o+='<path d="M'+a[0]+' '+a[1]+'L'+b[0]+' '+b[1]+'" stroke-width="'+(ws[i]+1.6)+'"/>';
+    f+='<path d="M'+a[0]+' '+a[1]+'L'+b[0]+' '+b[1]+'" stroke-width="'+ws[i]+'"/>';}
+  for(i=1;i<pts.length-1;i++){o+='<circle cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(ws[i-1]/2+0.8)+'" fill="#8a6a22" stroke="none"/>';f+='<circle cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(ws[i-1]/2-0.2)+'" fill="url(#gkLeg)" stroke="none"/>'}
+  return '<g fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="#8a6a22">'+o+'</g><g stroke="url(#gkLeg)">'+f+'</g><g stroke="url(#gkGrain)" opacity=".7">'+f.replace(/url\(#gkLeg\)/g,'url(#gkGrain)')+'</g></g>';
+}
 function scGecko(){
-  var Y='#f6c445',YS='#e0a52f',CR='#fbefd2',SP='#3a2a1e',OL='#2b1d14';
-  var BODY='M56 76C70 58 120 54 146 74C164 88 160 108 142 117C114 128 72 126 56 112C48 102 48 88 56 76Z';
-  var HEAD='M12 66C10 46 28 30 52 30C78 30 92 46 90 66C88 86 68 96 48 95C28 94 14 84 12 66Z';
-  function dots(list,fill){return '<g fill="'+(fill||SP)+'">'+list.map(function(d){return '<ellipse cx="'+d[0]+'" cy="'+d[1]+'" rx="'+d[2]+'" ry="'+(d[3]||d[2])+'"/>'}).join('')+'</g>'}
-  var g='';
-  g+='<defs><clipPath id="gkcB"><path d="'+BODY+'"/></clipPath><clipPath id="gkcH"><path d="'+HEAD+'"/></clipPath></defs>';
-  g+='<ellipse cx="108" cy="132" rx="104" ry="7" fill="#2b1d14" opacity=".18"/>';
+  var OL='#8a6a22',SK='url(#gkSkin)',GR='url(#gkGrain)';
+  var BODY='M78 64C96 55 130 53 154 57C173 61 181 75 179 88C177 98 165 102 150 101C124 103 98 102 80 100C66 99 56 97 56 91C60 82 68 70 78 64Z';
+  var HEAD='M1 76C0 68 5 61 14 57C24 52 34 48 46 46C60 44 72 48 79 56C85 63 85 74 80 82C76 88 68 92 58 93C42 95 22 93 10 89C4 87 1 82 1 76Z';
+  var g='',tp0=scTailPath(0,0.7),tp1=scTailPath(0.62,1),tip=scTailPt(0.64);
+  g+='<defs>'+
+    '<linearGradient id="gkSkin" gradientUnits="userSpaceOnUse" x1="0" y1="44" x2="0" y2="106"><stop offset="0" stop-color="#b6872a"/><stop offset=".3" stop-color="#c99a35"/><stop offset=".6" stop-color="#d8b04a"/><stop offset=".82" stop-color="#e2c985"/><stop offset="1" stop-color="#efe6d2"/></linearGradient>'+
+    '<linearGradient id="gkTl" gradientUnits="userSpaceOnUse" x1="0" y1="68" x2="0" y2="122"><stop offset="0" stop-color="#c4952f"/><stop offset=".5" stop-color="#d3aa47"/><stop offset="1" stop-color="#dcc27e"/></linearGradient>'+
+    '<linearGradient id="gkLeg" gradientUnits="userSpaceOnUse" x1="0" y1="80" x2="0" y2="116"><stop offset="0" stop-color="#cfa441"/><stop offset="1" stop-color="#dcc27e"/></linearGradient>'+
+    '<linearGradient id="gkTop" gradientUnits="userSpaceOnUse" x1="0" y1="64" x2="0" y2="100"><stop offset="0" stop-color="#6a4a10" stop-opacity=".4"/><stop offset=".6" stop-color="#6a4a10" stop-opacity="0"/></linearGradient>'+
+    '<linearGradient id="gkFlank" gradientUnits="userSpaceOnUse" x1="0" y1="66" x2="0" y2="100"><stop offset="0" stop-color="#b8a9b8" stop-opacity="0"/><stop offset=".45" stop-color="#b8a9b8" stop-opacity=".34"/><stop offset="1" stop-color="#b8a9b8" stop-opacity="0"/></linearGradient>'+
+    '<linearGradient id="gkShade" gradientUnits="userSpaceOnUse" x1="0" y1="88" x2="0" y2="108"><stop offset="0" stop-color="#3a2a10" stop-opacity="0"/><stop offset="1" stop-color="#3a2a10" stop-opacity=".38"/></linearGradient>'+
+    '<radialGradient id="gkHi" gradientUnits="userSpaceOnUse" cx="90" cy="54" r="80"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'+
+    '<radialGradient id="gkIris" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e2c27c"/><stop offset=".55" stop-color="#b08c4e"/><stop offset="1" stop-color="#6f6a60"/></radialGradient>'+
+    '<linearGradient id="gkTng" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e98f9a"/><stop offset="1" stop-color="#c8606f"/></linearGradient>'+
+    '<linearGradient id="gkBand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2493d"/><stop offset=".5" stop-color="#c0322a"/><stop offset="1" stop-color="#8a1f19"/></linearGradient>'+
+    '<pattern id="gkGrain" width="4.3" height="3.7" patternUnits="userSpaceOnUse"><circle cx="1" cy=".9" r=".5" fill="#fff" opacity=".22"/><circle cx="3.2" cy="2.7" r=".45" fill="#fff" opacity=".18"/><circle cx="2.3" cy="1.2" r=".3" fill="#4a3510" opacity=".18"/><circle cx=".6" cy="3" r=".3" fill="#4a3510" opacity=".15"/></pattern>'+
+    '<filter id="gkBlur" x="-20%" y="-150%" width="140%" height="400%"><feGaussianBlur stdDeviation="4"/></filter>'+
+    '<clipPath id="gkcB"><path d="'+BODY+'"/></clipPath><clipPath id="gkcH"><path d="'+HEAD+'"/></clipPath>'+
+    '<clipPath id="gkcT0"><path d="'+tp0+'"/></clipPath><clipPath id="gkcT1"><path d="'+tp1+'"/></clipPath>'+
+    '</defs>';
+  g+='<ellipse cx="132" cy="112" rx="136" ry="9" fill="#1c130c" opacity=".42" filter="url(#gkBlur)"/>';
   g+='<g class="gk">';
-  /* Schwanz: dick, rund, leicht aufgerollt */
+  /* ferne Beine */
+  g+='<g style="filter:brightness(.78)">'+
+    scLimb([[102,84],[96,101],[86,110]],[11,7.5])+'<ellipse cx="82" cy="110.5" rx="8" ry="3.5" fill="url(#gkLeg)"/>'+scToes(76,110.5,[[62,105],[60,109],[61,113],[66,116],[72,116.5]])+
+    scLimb([[166,86],[152,101],[162,110.5]],[18,10])+'<ellipse cx="150" cy="111" rx="10" ry="3.6" fill="url(#gkLeg)"/>'+scToes(141,111,[[126,105],[124,109],[125,113.5],[130,116.5],[136,117]])+
+    '</g>';
+  /* Schwanz */
   g+='<g class="gk-tail">'+
-    '<g fill="none" stroke="'+OL+'" stroke-linecap="round" stroke-linejoin="round"><path d="M148 104C168 112 188 108 194 92" stroke-width="35"/><path d="M194 92C198 76 190 62 178 57" stroke-width="27"/><path d="M178 57C172 55 167 59 167 66" stroke-width="19"/></g>'+
-    '<g fill="none" stroke="'+Y+'" stroke-linecap="round" stroke-linejoin="round"><path d="M148 104C168 112 188 108 194 92" stroke-width="29"/><path d="M194 92C198 76 190 62 178 57" stroke-width="21"/><path d="M178 57C172 55 167 59 167 66" stroke-width="13"/></g>'+
-    '<path d="M150 116C168 122 188 118 200 104" fill="none" stroke="'+YS+'" stroke-width="5" stroke-linecap="round" opacity=".8"/>'+
-    dots([[162,104,3.4,2.8],[174,108,3.8,3],[186,104,3.4,2.8],[196,94,3.6,3],[191,82,3,2.6],[197,72,2.8,2.4],[188,64,3,2.5],[178,58,2.5,2.2],[170,63,2.2,2]])+
-    '</g>';
-  /* Körper */
-  g+='<g class="gk-body">'+
-    '<ellipse cx="66" cy="113" rx="10" ry="14" fill="'+YS+'" class="o"/>'+
-    '<ellipse cx="61" cy="126" rx="12" ry="5" fill="'+YS+'" class="o"/>'+
-    '<g fill="'+YS+'" class="o2"><circle cx="49" cy="123.5" r="2.9"/><circle cx="47.5" cy="127.6" r="2.9"/><circle cx="50" cy="130.4" r="2.5"/></g>'+
-    '<path d="'+BODY+'" fill="'+Y+'" class="o"/>'+
-    '<g clip-path="url(#gkcB)"><ellipse cx="105" cy="114" rx="72" ry="14" fill="'+YS+'"/><ellipse cx="105" cy="134" rx="72" ry="17" fill="'+CR+'"/>'+
-    dots([[100,62,5,3.6],[118,60,4,3],[133,66,5,3.6],[148,76,4.2,3.4],[112,73,3.4,2.8],[128,82,4.2,3.2],[146,94,3.4,2.8],[98,82,3,2.6],[120,96,3.6,2.8],[88,70,3,2.4]])+'</g>'+
-    '<path d="'+BODY+'" fill="none" class="o"/>'+
-    '<ellipse cx="138" cy="106" rx="20" ry="17" fill="'+Y+'" class="o"/>'+
-    dots([[131,100,3.2,2.6],[144,108,2.8,2.4],[139,95,2.2,2],[130,112,2.4,2]])+
-    '<g fill="'+Y+'" class="o2"><circle cx="89" cy="122.4" r="3.4"/><circle cx="86.5" cy="127" r="3.4"/><circle cx="90" cy="130.2" r="2.9"/></g>'+
-    '<ellipse cx="112" cy="126" rx="25" ry="5.2" fill="'+Y+'" class="o"/>'+
-    '<ellipse cx="132" cy="119" rx="12" ry="8" fill="'+Y+'"/>'+
-    '</g>';
-  /* Kopf */
+    '<path d="'+tp0+'" fill="url(#gkTl)" stroke="'+OL+'" stroke-width=".9" stroke-linejoin="round"/>'+
+    '<g clip-path="url(#gkcT0)">'+scTailRings(0,0.7)+'<path d="'+tp0+'" fill="'+GR+'"/><path d="'+tp0+'" fill="url(#gkShade)" opacity=".7"/><path d="'+tp0+'" fill="url(#gkTop)"/>'+scTailSpots(0,0.7,11)+'</g>'+
+    '<g class="gk-tip" style="transform-origin:'+scR(tip.x)+'px '+scR(tip.y)+'px">'+
+    '<path d="'+tp1+'" fill="url(#gkTl)" stroke="'+OL+'" stroke-width=".9" stroke-linejoin="round"/>'+
+    '<g clip-path="url(#gkcT1)">'+scTailRings(0.62,1)+'<path d="'+tp1+'" fill="'+GR+'"/><path d="'+tp1+'" fill="url(#gkShade)" opacity=".7"/><path d="'+tp1+'" fill="url(#gkTop)"/>'+scTailSpots(0.62,1,23)+'</g>'+
+    '</g></g>';
+  /* Rumpf (durchgehend: Hals, Rücken, Becken, Bauch) und Kopf */
+  g+='<g class="gk-fore">';
+  g+='<g class="gk-body"><path d="'+BODY+'" fill="'+SK+'" stroke="'+OL+'" stroke-width="1" stroke-linejoin="round"/>'+
+    '<g clip-path="url(#gkcB)"><rect x="50" y="50" width="136" height="58" fill="url(#gkFlank)"/>'+
+    '<rect x="50" y="50" width="136" height="58" fill="'+GR+'"/><rect x="50" y="50" width="136" height="58" fill="url(#gkHi)" opacity=".55"/><rect x="50" y="50" width="136" height="58" fill="url(#gkShade)"/>'+
+    scSpots(88,172,58,88,19,1.8,4.4,5)+scSpots(84,168,84,98,7,1.2,2.4,9)+scSpots(60,86,66,86,5,1.4,2.8,13)+'</g></g>';
   g+='<g class="gk-head">'+
-    '<path d="'+HEAD+'" fill="'+Y+'" class="o"/>'+
-    '<g clip-path="url(#gkcH)"><ellipse cx="66" cy="102" rx="44" ry="13" fill="'+YS+'"/><ellipse cx="40" cy="100" rx="34" ry="14" fill="'+CR+'"/></g>'+
-    '<path d="'+HEAD+'" fill="none" class="o"/>'+
-    dots([[52,37,3.6,2.8],[62,35,2.6,2.2],[41,38,2.4,2],[82,54,3,2.6],[85,66,2.6,2.2],[72,84,3,2.4],[56,86,2.4,2],[22,52,2.2,2],[78,44,2.2,2]])+
-    '<g fill="'+SP+'"><circle cx="19" cy="63" r="1.9"/><circle cx="24" cy="69" r="1.7"/></g>'+
-    '<g class="gk-eye"><circle cx="36" cy="58" r="15" fill="'+Y+'" class="o"/><circle cx="36" cy="58" r="11.3" fill="'+OL+'"/><circle cx="32" cy="53.5" r="4" fill="#fff"/><circle cx="40" cy="62.5" r="1.9" fill="#fff"/></g>'+
-    '<g class="gk-eye"><circle cx="69" cy="57" r="14.4" fill="'+Y+'" class="o"/><circle cx="69" cy="57" r="10.8" fill="'+OL+'"/><circle cx="65" cy="52.6" r="3.8" fill="#fff"/><circle cx="73" cy="61.5" r="1.8" fill="#fff"/></g>'+
-    '<g class="gk-lids">'+
-      '<g><circle cx="36" cy="58" r="14.6" fill="'+Y+'"/><path d="M24 62Q36 70 48 62" fill="none" class="o2"/></g>'+
-      '<g><circle cx="69" cy="57" r="13.9" fill="'+Y+'"/><path d="M58 61Q69 69 80 61" fill="none" class="o2"/></g>'+
-    '</g>'+
-    '<path d="M17 77C28 92 54 94 76 80" fill="none" class="o2"/>'+
-    '<ellipse cx="76" cy="73" rx="6" ry="4.2" fill="#f08a6a" opacity=".45"/>'+
-    '<g class="gk-tongue"><path d="M24 76L-4 76A4 4 0 0 0 -4 84L24 84Z" fill="#f28aa0" class="o2"/><path d="M22 80L0 80" stroke="#d96a86" stroke-width="1.4" stroke-linecap="round"/></g>'+
+    '<path d="'+HEAD+'" fill="'+SK+'" stroke="'+OL+'" stroke-width="1" stroke-linejoin="round"/>'+
+    '<g clip-path="url(#gkcH)"><path d="M4 82C20 90 42 93 62 87L86 100L0 102Z" fill="#efe6d2" opacity=".5"/>'+
+    '<path d="M14 58C26 51 36 48 48 46C62 45 73 49 80 58C70 54 60 52 48 52C36 53 26 56 14 60Z" fill="#e9cc78" opacity=".5"/>'+
+    '<rect x="0" y="40" width="90" height="60" fill="'+GR+'"/><rect x="0" y="40" width="90" height="60" fill="url(#gkHi)" opacity=".5"/>'+scSpots(6,78,48,86,34,0.8,2.6,31)+'</g>'+
+    '<g class="gk-jawg"><path d="M1.5 79C16 86 40 91 62 86L63 80L8 76Z" fill="#4a1f1f" class="gk-mouthin" opacity="0"/>'+
+    '<g class="gk-jaw"><path d="M1.5 79C16 86 40 91 62 86L68 92C50 98 24 96 11 91C5 88 1 84 1.5 79Z" fill="'+SK+'"/><path d="M1.5 79C16 86 40 91 62 86L68 92C50 98 24 96 11 91C5 88 1 84 1.5 79Z" fill="#efe6d2" opacity=".32"/></g></g>'+
+    '<path d="M1.5 79C16 86 40 91 62 86C68 84.5 71 81 72 76" fill="none" stroke="#4a3418" stroke-width="1.1" stroke-linecap="round"/>'+
+    '<path d="M2 77.6C16 84 40 89 62 84.6" fill="none" stroke="#fff" stroke-width=".7" opacity=".3"/>'+
+    '<ellipse cx="5" cy="70" rx="1.7" ry="1" fill="#3a2a1c" transform="rotate(-20 5 70)"/>'+
+    '<ellipse cx="68" cy="68" rx="3.4" ry="2.3" fill="#4a3a28" transform="rotate(-20 68 68)"/><ellipse cx="68" cy="68" rx="3.4" ry="2.3" fill="none" stroke="#8a6a22" stroke-width=".6" transform="rotate(-20 68 68)"/>'+
+    '<g class="gk-eye"><circle cx="44" cy="63" r="8.6" fill="#c9a24a" stroke="#8a6a22" stroke-width=".9"/>'+
+    '<circle cx="44" cy="63" r="6.9" fill="url(#gkIris)"/>'+
+    (function(){var s='',i,a;for(i=0;i<14;i++){a=i/14*Math.PI*2;s+='M'+scR(44+Math.cos(a)*3)+' '+scR(63+Math.sin(a)*3)+'L'+scR(44+Math.cos(a)*6.6)+' '+scR(63+Math.sin(a)*6.6)}return '<path d="'+s+'" stroke="#4d3b1e" stroke-width=".45" opacity=".4" fill="none"/>'})()+
+    '<ellipse class="gk-pupil" cx="44" cy="63" rx="1.4" ry="6" fill="#0c0a09"/>'+
+    '<circle cx="41.6" cy="60" r="1.4" fill="#fff" opacity=".92"/><circle cx="46.4" cy="66.2" r=".65" fill="#fff" opacity=".6"/></g>'+
+    '<g class="gk-lids"><g><circle cx="44" cy="63" r="8.8" fill="'+SK+'" stroke="#8a6a22" stroke-width=".8"/><path d="M36 64.4Q44 68.6 52 64.4" fill="none" stroke="#5a4220" stroke-width=".9"/></g></g>'+
+    '<g class="gk-tongue"><path d="M24 83.6L-9 83.6A3.4 3.4 0 0 0 -9 90.4L24 90.4Z" fill="url(#gkTng)" stroke="#a84a58" stroke-width=".7"/><path d="M23 87L-7 87" stroke="#b5505f" stroke-width=".7" stroke-linecap="round"/></g>'+
     '<g class="gk-band">'+
-      '<g class="gk-bt"><path d="M88 47C98 38 110 42 118 36L115 50C106 53 98 56 88 53Z" fill="#e0302b" class="o2"/></g>'+
-      '<g class="gk-bt gk-bt2"><path d="M88 51C98 56 106 66 116 66L108 74C101 70 94 62 88 56Z" fill="#c92722" class="o2"/></g>'+
-      '<path d="M16 52C28 36 74 30 88 50" fill="none" stroke="'+OL+'" stroke-width="12" stroke-linecap="round"/>'+
-      '<path d="M16 52C28 36 74 30 88 50" fill="none" stroke="#e0302b" stroke-width="6.4" stroke-linecap="round"/>'+
-      '<path d="M26 44C38 36 56 34 70 37" fill="none" stroke="#ff7a70" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>'+
+      '<g class="gk-bt"><path d="M79 59C88 52 97 54 108 43L107 54C98 60 90 62 80 63Z" fill="url(#gkBand)" stroke="#6e1712" stroke-width=".7" stroke-linejoin="round"/><path d="M86 56C93 54 99 52 104 47" stroke="#f08a80" stroke-width=".7" fill="none" opacity=".6"/></g>'+
+      '<g class="gk-bt gk-bt2"><path d="M79 61C89 63 99 61 111 64L105 71C96 69 88 68 80 65Z" fill="url(#gkBand)" stroke="#6e1712" stroke-width=".7" stroke-linejoin="round"/></g>'+
+      '<path d="M16 63C24 54 34 50 46 49.4C60 48.8 71 52 79 60" fill="none" stroke="#6e1712" stroke-width="7.4" stroke-linecap="round"/>'+
+      '<path d="M16 63C24 54 34 50 46 49.4C60 48.8 71 52 79 60" fill="none" stroke="url(#gkBand)" stroke-width="5.6" stroke-linecap="round"/>'+
+      '<path d="M20 60.6C28 53 38 49 48 48.2C60 47.8 69 50.6 76 57" fill="none" stroke="#f08a80" stroke-width=".9" stroke-linecap="round" opacity=".55"/>'+
+      '<path d="M30 55L29 59M40 52L39.5 56M52 51.5L52 55.5M63 53L63.6 57" stroke="#6e1712" stroke-width=".7" opacity=".4"/>'+
+      '<ellipse cx="79.5" cy="60.5" rx="4.2" ry="3.4" fill="#b8302a" stroke="#6e1712" stroke-width=".7"/>'+
     '</g>'+
-  '</g>';
-  /* Vorderarm */
-  g+='<g class="gk-arm">'+
-    '<path d="M34 102L31 118" fill="none" stroke="'+OL+'" stroke-width="18" stroke-linecap="round"/>'+
-    '<path d="M34 102L31 118" fill="none" stroke="'+Y+'" stroke-width="12" stroke-linecap="round"/>'+
-    '<ellipse cx="22" cy="117" rx="6.8" ry="3.9" transform="rotate(-12 22 117)" fill="'+Y+'" class="o2 gk-thumb"/>'+
-    '<g class="gk-toes" fill="'+Y+'"><circle cx="24.4" cy="126" r="3.5" class="o2"/><circle cx="31" cy="128.2" r="3.5" class="o2"/><circle cx="37.6" cy="126" r="3.5" class="o2"/></g>'+
-    '<circle cx="31" cy="120" r="8.3" fill="'+Y+'" class="o"/>'+
-    dots([[35,106,1.8],[32,112,1.6]])+
-    '<g class="gk-watch"><rect x="24.4" y="107.6" width="15.4" height="6.6" rx="2.4" transform="rotate(-8 32 111)" fill="#3a4a6a" class="o2"/>'+
-    '<circle cx="32.4" cy="110.8" r="4.7" fill="#eaf2ff" class="o2"/><path d="M32.4 110.8V108M32.4 110.8H34.6" stroke="'+OL+'" stroke-width="1.2" stroke-linecap="round" fill="none"/></g>'+
-  '</g>';
-  g+='<g class="gk-zzz"><text x="92" y="30">Z</text><text x="104" y="16" style="font-size:20px">Z</text><text x="118" y="0" style="font-size:24px">Z</text></g>';
-  g+='<g class="gk-cricket"><g fill="#86a636" class="o2">'+
-    '<path d="M-2 1L-9 -10L-1 -2" fill="none"/><path d="M-6 3L-14 -8L-6 0" fill="none"/>'+
-    '<ellipse cx="0" cy="0" rx="9.5" ry="5.6"/><circle cx="10" cy="-1.5" r="4.2"/>'+
-    '<path d="M12 -5C16 -12 22 -13 26 -11" fill="none"/></g>'+
-    '<circle cx="11.6" cy="-2.4" r="1.2" fill="'+OL+'"/><path d="M-4 -2L5 -2" stroke="#5f7a1e" stroke-width="1.6" stroke-linecap="round"/></g>';
+  '</g></g>';
+  /* nahes Vorderbein: Oberarm schräg nach außen/hinten-unten, Ellbogen, Unterarm zum Boden */
+  g+='<g class="gk-arm">'+scLimb([[92,84],[84,101],[64,110]],[13,8.5])+
+    '<ellipse cx="60" cy="110.5" rx="8.5" ry="3.7" fill="url(#gkLeg)" stroke="'+OL+'" stroke-width=".7"/>'+
+    scToes(53,110.5,[[39,105],[36,109],[37,113.5],[42,116.5],[49,117]])+
+    '<g fill="#2a2420"><ellipse cx="90" cy="89" rx="2" ry="1.4"/><ellipse cx="86" cy="96" rx="1.6" ry="1.2"/></g></g>';
+  /* nahes Hinterbein: kräftiger Oberschenkel, Knie, Unterschenkel, flacher Fuß */
+  g+='<g class="gk-hind">'+scLimb([[158,84],[136,100],[148,110.5]],[24,13])+
+    '<ellipse cx="134" cy="111" rx="11.5" ry="3.9" fill="url(#gkLeg)" stroke="'+OL+'" stroke-width=".7"/>'+
+    scToes(123,111,[[107,105],[104,109],[105,113.5],[110,116.5],[117,117]])+
+    '<g fill="#2a2420"><ellipse cx="150" cy="88" rx="3.4" ry="2.4"/><ellipse cx="143" cy="95" rx="2.6" ry="2"/><ellipse cx="156" cy="93" rx="2.2" ry="1.6"/><ellipse cx="139" cy="101" rx="1.8" ry="1.4"/></g></g>';
+  g+='<g class="gk-zzz"><text x="70" y="40">Z</text><text x="80" y="28" style="font-size:15px">Z</text><text x="92" y="14" style="font-size:18px">Z</text></g>';
+  g+='<g class="gk-cricket"><g transform="scale(1.35)">'+
+    '<path d="M3 1C0 -6 -4 -7.5 -8 -4.5L-17 3L-23 5.5" fill="none" stroke="#4e3519" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<ellipse cx="-3" cy="0" rx="9.5" ry="4.4" fill="#6b4824"/><ellipse cx="-3" cy="-1.6" rx="8.6" ry="2.6" fill="#4f3720"/>'+
+    '<path d="M-12 -1C-6 -4 4 -4 8 -1" fill="none" stroke="#2f2112" stroke-width=".6"/>'+
+    '<ellipse cx="6.5" cy="-.5" rx="5" ry="4" fill="#7b5430"/><ellipse cx="13" cy=".6" rx="3.4" ry="3.1" fill="#8a6038"/>'+
+    '<circle cx="14.6" cy="-.4" r=".9" fill="#111"/>'+
+    '<path d="M14 -1.6C20 -9 30 -11 41 -6" fill="none" stroke="#5a3e22" stroke-width=".7"/><path d="M14.4 -.8C22 -4 32 -3 39 3" fill="none" stroke="#5a3e22" stroke-width=".7"/>'+
+    '<path d="M8 2L10 6.5L14 7.5M5 2.5L5 7L8 8.5" fill="none" stroke="#4e3519" stroke-width=".9" stroke-linecap="round"/>'+
+    '</g></g>';
   g+='</g>';
   return g;
 }
+
 function sceneSvg(){
   var s='<svg viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">';
-  s+='<defs><linearGradient id="scSky" x1="0" y1="0" x2="0" y2="1"><stop id="scS0" offset="0" stop-color="#3b2a5a"/><stop id="scS1" offset="1" stop-color="#f29a6b"/></linearGradient></defs>';
+  s+='<defs><linearGradient id="scSky" x1="0" y1="0" x2="0" y2="1"><stop id="scS0" offset="0" stop-color="#3b2a5a"/><stop id="scS1" offset="1" stop-color="#f29a6b"/></linearGradient>'+
+    '<linearGradient id="scDuneB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ebb06a"/><stop offset="1" stop-color="#d6904d"/></linearGradient>'+
+    '<linearGradient id="scDuneF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dd9556"/><stop offset="1" stop-color="#c47a40"/></linearGradient>'+
+    '<linearGradient id="scGrnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c68c"/><stop offset="1" stop-color="#d3a766"/></linearGradient>'+
+    '<linearGradient id="scMesaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d19a82"/><stop offset="1" stop-color="#b27763"/></linearGradient>'+
+    '<linearGradient id="scRockG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b99677"/><stop offset="1" stop-color="#86664d"/></linearGradient>'+
+    '<linearGradient id="scRockTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcbb96"/><stop offset="1" stop-color="#b8936d"/></linearGradient>'+
+    '<radialGradient id="scMoonG" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fbfcff"/><stop offset="1" stop-color="#cdd4e6"/></radialGradient></defs>';
   s+='<rect width="1000" height="300" fill="url(#scSky)"/>';
   var stars='',i,sx=[[60,40],[140,90],[220,30],[300,70],[380,20],[450,60],[520,100],[600,35],[690,80],[770,25],[850,65],[920,105],[980,40],[110,130],[560,140]];
   for(i=0;i<sx.length;i++)stars+='<circle cx="'+sx[i][0]+'" cy="'+sx[i][1]+'" r="'+(1.3+(i%3)*0.5)+'" fill="#fff"/>';
   s+='<g id="scStars" opacity="0">'+stars+'</g>';
+  s+='<g id="scMoon" opacity="0" transform="translate(500 80)"><circle r="40" fill="#cfe0ff" opacity=".14"/><circle r="26" fill="url(#scMoonG)"/><circle cx="-8" cy="-6" r="4.6" fill="#bfc7dc" opacity=".7"/><circle cx="9" cy="7" r="6.4" fill="#bfc7dc" opacity=".6"/><circle cx="7" cy="-12" r="2.8" fill="#bfc7dc" opacity=".7"/></g>';
   s+='<g id="scSun" transform="translate(80 230)"><circle r="50" fill="#fff3b0" opacity=".3"/><circle r="34" fill="#ffd85a" stroke="#fff3b0" stroke-width="5"/></g>';
   var mesas=scMesa(130,150,58)+scMesa(330,100,40)+scMesa(480,190,72)+scMesa(660,120,48)+scMesa(800,160,62)+scMesa(930,70,36);
   s+='<g id="scMesa" transform="translate(0 0)">'+scTile(mesas)+'</g>';
   var dBack=scWave(function(x){var a=x/1000*Math.PI*2;return 214+9*Math.sin(2*a+0.6)+5*Math.sin(5*a+1.7)});
   var dFront=scWave(function(x){var a=x/1000*Math.PI*2;return 240+8*Math.sin(3*a+2)+4*Math.sin(7*a)});
-  var dunes='<path d="'+dBack+'L1010 300L-10 300Z" fill="#f4aa5c"/><path d="'+dBack+'" fill="none" class="o"/>'+
-    '<path d="'+dFront+'L1010 300L-10 300Z" fill="#ea9548"/><path d="'+dFront+'" fill="none" class="o"/>';
+  var dunes='<path d="'+dBack+'L1010 300L-10 300Z" fill="url(#scDuneB)"/><path d="'+dBack+'" fill="none" class="o"/>'+
+    '<path d="'+dFront+'L1010 300L-10 300Z" fill="url(#scDuneF)"/><path d="'+dFront+'" fill="none" class="o"/>';
   s+='<g id="scDune" transform="translate(0 0)">'+scTile(dunes)+'</g>';
   var gTop=scWave(function(x){var a=x/1000*Math.PI*2;return 258+3*Math.sin(3*a+1)+2*Math.sin(8*a)});
-  var gr='<path d="'+gTop+'L1010 300L-10 300Z" fill="#efc07a"/><path d="'+gTop+'" fill="none" class="o"/>'+
+  var gr='<path d="'+gTop+'L1010 300L-10 300Z" fill="url(#scGrnd)"/><path d="'+gTop+'" fill="none" class="o"/>'+
     '<rect x="-10" y="284" width="1020" height="16" fill="#e2a95e"/>'+
     '<g fill="none" stroke="#c98f48" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M40 276q10 -4 20 0"/><path d="M300 290q12 -4 24 0"/><path d="M520 274q10 -4 20 0"/><path d="M640 292q12 -4 24 0"/><path d="M860 278q10 -4 20 0"/><path d="M180 292q10 -3 18 0"/></g>'+
     scStone(60,296,6)+scStone(190,282,5)+scStone(335,293,7)+scStone(480,280,5)+scStone(620,296,6)+scStone(760,284,5)+scStone(880,294,7)+scStone(950,282,4)+
-    scRock(250,292,20,'#b98a66')+scRock(560,296,26,'#a97c5c')+scRock(835,294,18,'#b98a66')+
+    scRock(250,292,20,'url(#scRockG)')+scRock(560,296,26,'url(#scRockG)')+scRock(835,294,18,'url(#scRockG)')+
     scCactus(120,276,86,15,[{s:1,y:50,o:24,u:28}])+
     scCactus(420,274,66,13,[{s:-1,y:38,o:22,u:24}])+
     scCactus(705,278,96,16,[{s:-1,y:56,o:26,u:30},{s:1,y:36,o:24,u:22}])+
@@ -992,10 +1095,11 @@ function sceneSvg(){
     '<g fill="none" stroke="#8a6a3e" stroke-width="2" stroke-linecap="round"><ellipse rx="15" ry="7"/><ellipse rx="15" ry="7" transform="rotate(60)"/><ellipse rx="15" ry="7" transform="rotate(120)"/><path d="M-9 -9Q0 3 10 -9"/></g></g>';
   /* Fels mit Gecko: steht still */
   s+='<g id="scRock" transform="translate(0 0)">'+
-    '<path d="M702 300C706 274 720 254 750 248L936 246C966 252 978 274 982 300Z" fill="#b98a66" class="o"/>'+
-    '<path d="M750 248C800 236 890 236 936 246C910 256 780 258 750 248Z" fill="#d9ae85" class="o2"/>'+
-    '<path d="M748 274C768 270 778 278 790 274M880 280C896 276 910 282 940 276" fill="none" stroke="#8a6044" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>'+
-    '<g transform="translate(728 96.7) scale(1.14)">'+scGecko()+'</g></g>';
+    '<path d="M640 300C646 276 668 256 704 249L944 247C980 252 994 276 1000 300Z" fill="url(#scRockG)" class="o"/>'+
+    '<path d="M704 249C770 236 880 236 944 247C900 259 760 261 704 249Z" fill="url(#scRockTop)" class="o2"/>'+
+    '<path d="M690 276C712 272 724 280 740 276M900 282C920 278 940 284 970 278M780 290C800 286 820 292 850 288" fill="none" stroke="#6e513b" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>'+
+    '<g transform="translate(672 116) scale(1.2)">'+scGecko()+'</g></g>';
+  s+='<rect id="scNight" width="1000" height="300" fill="#0b1230" opacity="0" style="pointer-events:none"/>';
   s+='<rect id="scVeil" width="1000" height="300" fill="#ff6a2a" opacity="0" style="opacity:0"/>';
   s+=scConfetti();
   s+='</svg>';
@@ -1011,14 +1115,15 @@ function sceneEl(){
   SCENE.el=d;
   var q=function(s){return d.querySelector(s)};
   SCENE.refs={stop0:q('#scS0'),stop1:q('#scS1'),sun:q('#scSun'),stars:q('#scStars'),mesa:q('#scMesa'),dune:q('#scDune'),
-    ground:q('#scGround'),tw:q('#scTw'),rock:q('#scRock'),veil:q('#scVeil'),gk:q('.gk'),bub:q('.bubble')};
+    ground:q('#scGround'),moon:q('#scMoon'),night:q('#scNight'),tw:q('#scTw'),rock:q('#scRock'),veil:q('#scVeil'),gk:q('.gk'),bub:q('.bubble')};
+  SCENE.cacs=[].slice.call(d.querySelectorAll('.sc-cac')).map(function(e){return {e:e,x:(+e.getAttribute('data-x'))+(e.parentNode.getAttribute('transform')?1000:0)}});
   scState('band',SCENE.band);scState('sleep',SCENE.sleep);scState('cheer',SCENE.cheer);
   scApplyVeil();
   return d;
 }
 function sceneMode(){
   if(RIDE)return RIDE.done?'sum':'ride';
-  return 'demo';
+  return 'home';
 }
 function sceneMount(){
   var slot=$('#sceneSlot');
@@ -1029,8 +1134,12 @@ function sceneMount(){
   SCENE.fit='';
   sceneFit();
   sceneRun();
+  if(SCENE.mode==='home'){
+    homeRun();
+    if(!SCENE.greeted){SCENE.greeted=true;geckoDo('wave');geckoSay('Hallo! Bereit fürs Training?',4500)}
+  }else homeStop();
 }
-function sceneStop(){if(SCENE.raf){cancelAnimationFrame(SCENE.raf);SCENE.raf=0}}
+function sceneStop(){if(SCENE.raf){cancelAnimationFrame(SCENE.raf);SCENE.raf=0}homeStop()}
 function sceneRun(){
   if(SCENE.raf||document.hidden||!SCENE.el||!SCENE.el.isConnected)return;
   SCENE.last=0;
@@ -1039,12 +1148,11 @@ function sceneRun(){
 document.addEventListener('visibilitychange',function(){if(!document.hidden)sceneRun()});
 function sceneSetMode(m){
   if(SCENE.mode===m)return;
-  SCENE.mode=m;
+  SCENE.mode=m;SCENE.show=false;
   scState('band',false);scState('sleep',false);scState('cheer',false);
   gkClearOnce();gkHide();
   SCENE.veil=0;scApplyVeil();
-  if(m==='demo'){SCENE.t0=Date.now();SCENE.dn=-1}
-  else if(m==='sum'){scState('cheer',true);geckoSay('Geschafft! 🎉')}
+  if(m==='sum'){scState('cheer',true);geckoSay('Geschafft! 🎉')}
 }
 function scState(k,on){
   SCENE[k]=!!on;
@@ -1053,32 +1161,77 @@ function scState(k,on){
   if(k==='cheer')SCENE.el.classList.toggle('cheering',!!on);
 }
 function scApplyVeil(){if(SCENE.refs)SCENE.refs.veil.style.opacity=String(SCENE.veil)}
-/* Sichtbarer Ausschnitt (slice): Gecko-Fels bleibt komplett im Bild, Blasenzipfel zeigt auf den Kopf */
+/* Startansicht: Leerlauf-Verhalten, nur solange die Szene im DOM steht */
+function homeRun(){if(!SCENE.homeT){SCENE.hIdle=Date.now()+scRnd(30000,60000);SCENE.homeT=setInterval(homeTick,1000)}}
+function homeStop(){if(SCENE.homeT){clearInterval(SCENE.homeT);SCENE.homeT=0}}
+function homeTick(){
+  if(SCENE.mode!=='home'||SCENE.show||!SCENE.el||!SCENE.el.isConnected||document.hidden)return;
+  if(Date.now()>=SCENE.hIdle){SCENE.hIdle=Date.now()+scRnd(30000,60000);geckoDo(scPick(['lick','eat','wave','tap']))}
+}
+function sceneEvent(k){
+  if(RIDE)return;
+  if(k==='trainer'){geckoDo('wow');geckoSay('Rolle verbunden!')}
+  else if(k==='hr'){geckoDo('thumbs');geckoSay('Puls ist da!')}
+  else if(k==='pick'){geckoDo('thumbs');geckoSay(scPick(['Gute Wahl!','Das wird gut!',"Auf geht's!"]))}
+}
+function scShow(){
+  if(!SCENE.cfg.on||SCENE.mode!=='home')return;
+  SCENE.show=true;SCENE.t0=Date.now();SCENE.dn=-1;
+}
+function scHomeBar(){
+  var c=SCENE.cfg,o='<div class="row sc-set"><button type="button" class="btn" data-act="scOn" aria-pressed="'+(c.on?'true':'false')+'">Szene</button>';
+  if(c.on)o+='<button type="button" class="btn" data-act="scTalk" aria-pressed="'+(c.talk?'true':'false')+'">Sprechblasen</button>'+
+    '<button type="button" class="btn" data-act="scDemo">Posen zeigen</button>';
+  return o+'</div>';
+}
+/* Sichtbarer Ausschnitt (slice): Fels bleibt im Bild, Blase sitzt oben links vom Kopf */
 function sceneFit(){
   var el=SCENE.el,w=el.clientWidth,h=el.clientHeight;
   if(!w||!h)return;
   var key=w+'x'+h;if(key===SCENE.fit)return;SCENE.fit=key;
   var sc=Math.max(w/1000,h/300),vw=w/sc,L=500-vw/2,Rr=500+vw/2;
   SCENE.vis={l:L,r:Rr,top:300-h/sc};
-  var dx=Math.min(0,Rr-24-982);
+  var dx=Math.min(0,Rr-24-1000);SCENE.dx=dx;
+  var hp=(722+dx-L)*sc;
   SCENE.refs.rock.setAttribute('transform','translate('+Math.round(dx)+' 0)');
-  el.style.setProperty('--tail',Math.round(w*0.88-(786+dx-L)*sc)+'px');
+  el.style.setProperty('--bright',Math.max(8,Math.round(w-hp-34))+'px');
+  el.style.setProperty('--tail','30px');
+}
+function scMix(c1,c2,t){
+  var o='#',j,x,y,v;
+  for(j=1;j<7;j+=2){x=parseInt(c1.substr(j,2),16);y=parseInt(c2.substr(j,2),16);v=Math.round(x+(y-x)*t);o+=(v<16?'0':'')+v.toString(16)}
+  return o;
 }
 function scSkyAt(f){
   var K=SC_SKY,i=1;
   while(i<K.length-1&&f>K[i][0])i++;
   var a=K[i-1],b=K[i],t=(f-a[0])/(b[0]-a[0]);t=Math.max(0,Math.min(1,t));
-  function mix(c1,c2){
-    var o='#',j,x,y,v;
-    for(j=1;j<7;j+=2){x=parseInt(c1.substr(j,2),16);y=parseInt(c2.substr(j,2),16);v=Math.round(x+(y-x)*t);o+=(v<16?'0':'')+v.toString(16)}
-    return o;
-  }
-  return [mix(a[1],b[1]),mix(a[2],b[2])];
+  return [scMix(a[1],b[1],t),scMix(a[2],b[2],t)];
 }
-function sceneF(){
-  if(SCENE.mode==='demo')return ((Date.now()-SCENE.t0)%40000)/40000;
-  if(RIDE&&RIDE.total>0)return Math.max(0,Math.min(1,RIDE.el/RIDE.total));
-  return 0;
+var SC_NIGHT=['#0f1630','#2b3a5c'];
+/* Himmelszustand: Fahrt = Fortschritt, Startansicht = echte Uhrzeit */
+function scSkyState(m){
+  var s={c:null,f:0,sun:1,moon:0,mu:0,stars:0,night:0},h,d,t,K=[[6,0],[8,0.12],[12.5,0.5],[17,0.85],[20,1]],i,ns=0;
+  function stars(f){return f>0.95?Math.min(0.8,(f-0.95)/0.05*0.8):0}
+  if(m==='home'&&!SCENE.show){
+    d=new Date();h=d.getHours()+d.getMinutes()/60+d.getSeconds()/3600;
+    if(h>=6&&h<=20){
+      for(i=1;i<K.length-1&&h>K[i][0];i++);
+      s.f=K[i-1][1]+(K[i][1]-K[i-1][1])*(h-K[i-1][0])/(K[i][0]-K[i-1][0]);
+      s.c=scSkyAt(s.f);
+      if(h>20-0)ns=0;
+    }else if(h>20&&h<21){s.f=1;t=h-20;s.c=[scMix(scSkyAt(1)[0],SC_NIGHT[0],t),scMix(scSkyAt(1)[1],SC_NIGHT[1],t)];ns=t}
+    else if(h>5&&h<6){s.f=0;t=h-5;s.c=[scMix(SC_NIGHT[0],scSkyAt(0)[0],t),scMix(SC_NIGHT[1],scSkyAt(0)[1],t)];ns=1-t}
+    else{s.c=SC_NIGHT.slice();ns=1}
+    s.sun=h>=5.5&&h<=20.5?1:0;
+    s.moon=ns;s.mu=((h-20+24)%24)/10;
+    s.stars=Math.max(ns*0.9,stars(s.f));s.night=ns*0.38;
+    return s;
+  }
+  if(m==='home')s.f=((Date.now()-SCENE.t0)%40000)/40000;
+  else s.f=RIDE&&RIDE.total>0?Math.max(0,Math.min(1,RIDE.el/RIDE.total)):0;
+  s.c=scSkyAt(s.f);s.stars=stars(s.f);
+  return s;
 }
 function sceneFrame(ts){
   SCENE.raf=0;
@@ -1091,37 +1244,46 @@ function sceneFrame(ts){
   sceneStep(dt);
 }
 function sceneStep(dt){
-  var R=SCENE.refs,L=IND.live,m=SCENE.mode,tv=0,kmh,now=Date.now(),f,sk,vis,xl,xr,amp,x,y,t;
+  var R=SCENE.refs,L=IND.live,m=SCENE.mode,tv=0,kmh,now=Date.now(),sk,vis,xl,xr,amp,x,y,t,key;
   sceneFit();
   if(m==='ride'&&RIDE&&!RIDE.done&&RIDE.run){
     kmh=L.speed!=null?L.speed:(L.power>0?30*Math.cbrt(L.power/200):0);
     tv=kmh*6;
-  }else if(m==='demo')tv=120;
+  }else if(m==='home'&&SCENE.show)tv=120;
   if(RM.matches)SCENE.v=0;
   else{SCENE.v+=(tv-SCENE.v)*0.05;SCENE.off+=SCENE.v*dt}
   var off=SCENE.off;
   R.mesa.setAttribute('transform','translate(-'+((off*0.08)%1000).toFixed(1)+' 0)');
   R.dune.setAttribute('transform','translate(-'+((off*0.3)%1000).toFixed(1)+' 0)');
   R.ground.setAttribute('transform','translate(-'+(off%1000).toFixed(1)+' 0)');
+  /* Kakteen nie hinter dem Gecko (Zone des Felsens) */
+  var zl=610+(SCENE.dx||0),oo=off%1000,ci,sx;
+  for(ci=0;ci<SCENE.cacs.length;ci++){sx=SCENE.cacs[ci].x-oo;SCENE.cacs[ci].e.style.opacity=sx<zl-45?'1':(sx>=zl?'0':((zl-sx)/45).toFixed(2))}
   /* Steppenläufer: rollt etwas schneller als der Boden */
   x=1500-((off*1.4+900)%2500);
   y=262-Math.abs(Math.sin(off*0.035))*6;
   R.tw.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+(-(off*0.4/17*57.3)%360).toFixed(1)+')');
   /* Tageszeit */
-  f=sceneF();
-  sk=scSkyAt(f);
-  if(sk.join()!==SCENE.sky){SCENE.sky=sk.join();R.stop0.setAttribute('stop-color',sk[0]);R.stop1.setAttribute('stop-color',sk[1])}
+  sk=scSkyState(m);
+  key=sk.c.join();
+  if(key!==SCENE.sky){SCENE.sky=key;R.stop0.setAttribute('stop-color',sk.c[0]);R.stop1.setAttribute('stop-color',sk.c[1])}
   vis=SCENE.vis||{l:0,r:1000,top:0};
   xl=Math.max(0,vis.l)+80;xr=Math.min(1000,vis.r)-80;
   amp=Math.min(190,230-(Math.max(0,vis.top)+44));
-  x=xl+f*(xr-xl);y=230-Math.sin(f*Math.PI)*amp;
+  x=xl+sk.f*(xr-xl);y=230-Math.sin(sk.f*Math.PI)*amp;
   R.sun.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');
-  R.stars.setAttribute('opacity',f>0.95?Math.min(0.8,(f-0.95)/0.05*0.8).toFixed(2):'0');
+  R.sun.setAttribute('opacity',String(sk.sun));
+  x=xl+sk.mu*(xr-xl);y=232-Math.sin(sk.mu*Math.PI)*amp*0.85;
+  R.moon.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');
+  R.moon.setAttribute('opacity',sk.moon.toFixed(2));
+  R.stars.setAttribute('opacity',sk.stars.toFixed(2));
+  R.night.setAttribute('opacity',sk.night.toFixed(2));
   /* Blinzeln */
   if(now>=SCENE.nextBlink){SCENE.nextBlink=now+scRnd(3000,6000);if(!SCENE.sleep)gkBlink()}
-  if(m==='demo'){
+  if(m==='home'&&SCENE.show){
     t=Math.floor((now-SCENE.t0)/4000);
-    if(t!==SCENE.dn){SCENE.dn=t;sceneDemoStep(((t%8)+8)%8)}
+    if(t>=8){SCENE.show=false;scState('band',false);scState('sleep',false);SCENE.veil=0;scApplyVeil();gkHide()}
+    else if(t!==SCENE.dn){SCENE.dn=t;sceneDemoStep(t)}
   }
 }
 function sceneDemoStep(n){
@@ -1206,7 +1368,7 @@ function sceneFinish(){sceneSetMode('sum')}
 function sceneClose(){
   scState('band',false);scState('sleep',false);scState('cheer',false);
   gkClearOnce();gkHide();
-  SCENE.mode='';SCENE.demo=false;SCENE.veil=0;scApplyVeil();
+  SCENE.mode='';SCENE.show=false;SCENE.veil=0;scApplyVeil();
   GK=null;
 }
 function sceneTick(){geckoTick()}
@@ -1249,7 +1411,7 @@ function renderIndoor(){
   var head='<div><p class="eyebrow">Training</p><h2 class="vh">Indoor-Trainer</h2></div>';
   if(RIDE&&!RIDE.done)el.innerHTML=head+rideHtml()+devicesHtml()+logHtml();
   else if(RIDE)el.innerHTML=head+summaryHtml()+logHtml();
-  else el.innerHTML=head+savedHtml()+devicesHtml()+workoutHtml()+freeErgHtml()+logHtml();
+  else el.innerHTML=head+scSlot()+scHomeBar()+savedHtml()+devicesHtml()+workoutHtml()+freeErgHtml()+logHtml();
   sceneMount();
 }
 function devicesHtml(){
@@ -1296,7 +1458,7 @@ function workoutHtml(){
       '<ol class="wo-steps">'+lis.join('')+'</ol>'+
       '<div class="row"><button type="button" class="btn primary" data-act="woStart">Workout starten</button></div>';
   }
-  o+=scSlot()+'<div class="row"><button type="button" class="btn" data-act="scDemo" aria-pressed="'+(SCENE.demo?'true':'false')+'">Gecko-Vorschau</button></div></div>';
+  o+='</div>';
   return o;
 }
 function freeErgHtml(){
@@ -1341,7 +1503,7 @@ document.addEventListener('click',function(ev){
   if(act==='rideFit')return rideFit();
   if(act==='scOn')return scToggle('on');
   if(act==='scTalk')return scToggle('talk');
-  if(act==='scDemo'){SCENE.demo=!SCENE.demo;return render()}
+  if(act==='scDemo')return scShow();
   if(act==='savedFit'){if(SAVED)fitDownload(SAVED.samples,SAVED.ftp,SAVED.startTs);return}
   if(act==='savedDrop'){rideDropKey();SAVED=null;render();return}
 });
