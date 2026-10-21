@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sub9 Indoor-Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Farben und Schriften wie in Sub9 */
+:root{
+  --bg:#edf0f3; --surface:#ffffff; --surface-2:#f5f7f9;
+  --ink:#141e28; --ink-2:#475563; --ink-3:#7a8794; --line:#d7dde3;
+  --accent:#c2365b; --done:#0ca30c; --crit:#d03b3b;
+  --f-disp:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:12px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1015; --surface:#131a21; --surface-2:#18212a;
+  --ink:#e5ebf0; --ink-2:#a6b3bf; --ink-3:#717f8c; --line:#25303a;
+  --accent:#ef6f8c; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b1015; --surface:#131a21; --surface-2:#18212a;
+  --ink:#e5ebf0; --ink-2:#a6b3bf; --ink-3:#717f8c; --line:#25303a;
+  --accent:#ef6f8c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0}
+.top{border-bottom:1px solid var(--line)}
+.top-in{max-width:960px;margin:0 auto;padding:0 16px;min-height:56px;display:flex;align-items:center;gap:8px}
+.mark{font:italic 700 26px/1 var(--f-disp);letter-spacing:.01em}
+.mark b{color:var(--accent);font-weight:700}
+.brand-sub{font:600 13px/1 var(--f-disp);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.app{max-width:960px;margin:0 auto;padding:16px 16px 40px}
+.view{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:800px){.view{grid-template-columns:repeat(2,minmax(0,1fr))}.view>div:first-child,.view>.notice,.view>.tiles{grid-column:1/-1}}
+.eyebrow{font:600 12px/1.2 var(--f-disp);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0}
+.vh{font:700 26px/1.1 var(--f-disp)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
+.panel h3{font:700 19px var(--f-disp)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tile .k{font-size:12.5px;color:var(--ink-2)}
+.tile .v{font:700 30px/1 var(--f-disp);font-variant-numeric:tabular-nums}
+.tile .v small{font:600 15px var(--f-disp);color:var(--ink-2);margin-left:3px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.ibtn{appearance:none;border:1px solid var(--line);background:var(--surface);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;cursor:pointer}
+.ibtn:disabled{opacity:.4;cursor:default}
+.dt-in{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);padding:9px 10px;font:inherit;font-size:15px;min-width:0}
+.notice{display:flex;flex-direction:column;gap:8px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font-size:13.5px;color:var(--ink-2)}
+.notice p{margin:0}
+.note{font-size:13px;color:var(--ink-3);margin:0}
+.explain{font-size:13.5px;color:var(--ink-2);margin:0;max-width:65ch}
+.muted{color:var(--ink-3);margin:0;font-size:14px}
+.in-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.in-log span{color:var(--ink-3);margin-right:8px}
+.in-st{font-size:14px;color:var(--ink-2);margin:0}
+.in-st b{color:var(--ink)}
+#inTarget{width:96px;text-align:center}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in"><span class="mark">SUB<b>9</b></span><span class="brand-sub">Indoor</span></div></header>
+<main class="app"><section class="view" id="view-indoor" aria-label="Indoor-Trainer"></section></main>
+<script>
+(function(){
+'use strict';
+function $(s){return document.querySelector(s)}
+function h(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var nf1=new Intl.NumberFormat('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});
+var S={view:'indoor'};
+/* Wie in Sub9: ein Eingabefeld mit Fokus wird nicht überschrieben, gerendert wird nach dem Verlassen */
+var deferred=false;
+function render(){
+  var ae=document.activeElement;
+  if(ae&&ae.id==='inTarget'){if(!deferred){deferred=true;ae.addEventListener('blur',function(){deferred=false;render()},{once:true})}return}
+  renderIndoor();
+}
+
+/* ---------- Indoor-Trainer (Bluetooth) ---------- */
+var BT_OK=!!(navigator.bluetooth&&navigator.bluetooth.requestDevice);
+var IND={trainer:null,hr:null,live:{power:null,cadence:null,speed:null,hr:null},target:150,erg:false,ctrl:false,log:[],busy:''};
+var cpQ=Promise.resolve();
+var FTMS_OP={0:'Steuerung',1:'Reset',5:'Wattvorgabe'},FTMS_RES={1:'OK',2:'nicht unterstützt',3:'ungültiger Wert',4:'fehlgeschlagen',5:'Steuerung nicht erlaubt'};
+
+/* Reine Parser: kein DOM-Zugriff, Eingabe ist ein DataView */
+function parseBikeData(dv){
+  var r={speed:null,cadence:null,power:null,hr:null};
+  if(!dv||dv.byteLength<2)return r;
+  var flags=dv.getUint16(0,true),o=2;
+  function fits(n){return o+n<=dv.byteLength}
+  if(!(flags&1)){if(!fits(2))return r;r.speed=dv.getUint16(o,true)/100;o+=2}
+  if(flags&2){if(!fits(2))return r;o+=2}
+  if(flags&4){if(!fits(2))return r;r.cadence=dv.getUint16(o,true)/2;o+=2}
+  if(flags&8){if(!fits(2))return r;o+=2}
+  if(flags&16){if(!fits(3))return r;o+=3}
+  if(flags&32){if(!fits(2))return r;o+=2}
+  if(flags&64){if(!fits(2))return r;r.power=dv.getInt16(o,true);o+=2}
+  if(flags&128){if(!fits(2))return r;o+=2}
+  if(flags&256){if(!fits(5))return r;o+=5}
+  if(flags&512){if(!fits(1))return r;r.hr=dv.getUint8(o);o+=1}
+  return r;
+}
+function parseHr(dv){
+  if(!dv||dv.byteLength<2)return null;
+  var f=dv.getUint8(0);
+  if(f&1){if(dv.byteLength<3)return null;return dv.getUint16(1,true)}
+  return dv.getUint8(1);
+}
+function ftmsTargetPowerCmd(w){return new Uint8Array([0x05,w&0xFF,(w>>8)&0xFF])}
+
+function indFmt(v,d){return v==null?'–':(d?nf1.format(v):String(Math.round(v)))}
+function indVals(){var L=IND.live;return {inPow:indFmt(L.power),inCad:indFmt(L.cadence),inSpd:indFmt(L.speed,1),inHr:indFmt(L.hr)}}
+/* Live-Werte: nur die Zahlen aktualisieren, nicht neu rendern */
+function indLive(){var v=indVals();Object.keys(v).forEach(function(id){var e=$('#'+id);if(e)e.textContent=v[id]})}
+function indLog(msg){
+  var d=new Date(),p=function(n){return (n<10?'0':'')+n};
+  IND.log.unshift({t:p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()),m:msg});
+  if(IND.log.length>12)IND.log.length=12;
+  if(S.view==='indoor')render();
+}
+function indEnd(){IND.busy='';render()}
+function indFail(e,dev){
+  var n=e&&e.name;
+  if(n==='SecurityError'){IND.blocked=true;indLog('Bluetooth ist in dieser Ansicht blockiert (Browser-Sicherheitsregel)');return}
+  if(n==='NotFoundError'&&!dev){indLog('Keine Auswahl getroffen');return}
+  indLog('Fehler: '+((e&&e.message)||e));
+}
+function indGone(kind,dev){
+  if(kind==='trainer'){
+    if(IND.trainer&&IND.trainer.device!==dev)return;
+    IND.trainer=null;IND.ctrl=false;IND.erg=false;IND.ergW=null;
+    IND.live.power=IND.live.cadence=IND.live.speed=null;
+    indLog('Trainer getrennt');
+  }else{
+    if(IND.hr&&IND.hr.device!==dev)return;
+    IND.hr=null;IND.live.hr=null;
+    indLog('Pulsgurt getrennt');
+  }
+  render();
+}
+function indBike(dv){
+  var v=parseBikeData(dv);
+  IND.live.power=v.power;IND.live.cadence=v.cadence;IND.live.speed=v.speed;
+  if(!IND.hr&&v.hr!=null)IND.live.hr=v.hr;
+  indLive();
+}
+function indCpReply(dv){
+  if(!dv||dv.byteLength<3||dv.getUint8(0)!==0x80)return;
+  var op=dv.getUint8(1),r=dv.getUint8(2);
+  if(op===0&&r===1)IND.ctrl=true;
+  if(op===5&&r!==1)IND.erg=false;
+  indLog('Trainer: '+(FTMS_OP[op]||'Befehl '+op)+' '+(FTMS_RES[r]||'Ergebnis '+r));
+}
+/* Schreibvorgänge auf den Control Point laufen seriell */
+function indWrite(bytes){
+  var cp=IND.trainer&&IND.trainer.cp;if(!cp)return;
+  cpQ=cpQ.then(function(){return cp.writeValueWithResponse?cp.writeValueWithResponse(bytes):cp.writeValue(bytes)})
+    .catch(function(e){indLog('Schreiben fehlgeschlagen: '+((e&&e.message)||e))});
+}
+
+function indConnTrainer(){
+  if(!BT_OK||IND.busy)return;
+  IND.busy='trainer';render();
+  var dev=null,srv=null,sv=null;
+  navigator.bluetooth.requestDevice({filters:[{services:[0x1826]}]}).then(function(d){
+    dev=d;dev.addEventListener('gattserverdisconnected',function(){indGone('trainer',dev)});
+    return dev.gatt.connect();
+  }).then(function(s){srv=s;return srv.getPrimaryService(0x1826)})
+  .then(function(s){sv=s;return sv.getCharacteristic(0x2AD2)})
+  .then(function(bike){
+    bike.addEventListener('characteristicvaluechanged',function(e){indBike(e.target.value)});
+    return bike.startNotifications().then(function(){return bike});
+  }).then(function(bike){
+    return sv.getCharacteristic(0x2AD9).then(function(cp){
+      cp.addEventListener('characteristicvaluechanged',function(e){indCpReply(e.target.value)});
+      return cp.startNotifications().then(function(){return cp});
+    }).catch(function(){return null}).then(function(cp){
+      IND.trainer={device:dev,server:srv,bike:bike,cp:cp};
+      IND.ctrl=false;IND.erg=false;IND.ergW=null;
+      indLog('Trainer verbunden: '+(dev.name||'Unbekannt'));
+      if(!cp)indLog('Trainer erlaubt keine Steuerung');
+    });
+  }).catch(function(e){
+    if(dev&&dev.gatt&&dev.gatt.connected){try{dev.gatt.disconnect()}catch(_){}}
+    indFail(e,dev);
+  }).then(indEnd);
+}
+function indConnHr(){
+  if(!BT_OK||IND.busy)return;
+  IND.busy='hr';render();
+  var dev=null;
+  navigator.bluetooth.requestDevice({filters:[{services:[0x180D]}]}).then(function(d){
+    dev=d;dev.addEventListener('gattserverdisconnected',function(){indGone('hr',dev)});
+    return dev.gatt.connect();
+  }).then(function(srv){return srv.getPrimaryService(0x180D)})
+  .then(function(sv){return sv.getCharacteristic(0x2A37)})
+  .then(function(c){
+    c.addEventListener('characteristicvaluechanged',function(e){IND.live.hr=parseHr(e.target.value);indLive()});
+    return c.startNotifications().then(function(){
+      IND.hr={device:dev,char:c};
+      indLog('Pulsgurt verbunden: '+(dev.name||'Unbekannt'));
+    });
+  }).catch(function(e){
+    if(dev&&dev.gatt&&dev.gatt.connected){try{dev.gatt.disconnect()}catch(_){}}
+    indFail(e,dev);
+  }).then(indEnd);
+}
+function indDisc(kind){
+  var d=kind==='trainer'?IND.trainer:IND.hr;if(!d)return;
+  try{d.device.gatt.disconnect()}catch(e){indLog('Fehler: '+((e&&e.message)||e))}
+}
+function indErg(){
+  if(!IND.trainer||!IND.trainer.cp){indLog('Trainer erlaubt keine Steuerung');return}
+  var t=Math.round(Number(IND.target));if(!isFinite(t))t=150;
+  t=Math.min(1000,Math.max(50,t));IND.target=t;
+  if(!IND.ctrl)indWrite(new Uint8Array([0x00]));
+  indWrite(ftmsTargetPowerCmd(t));
+  IND.erg=true;IND.ergW=t;
+  indLog('ERG: Ziel '+t+' W gesendet');
+}
+function indStep(d){
+  var base=isFinite(IND.target)?Math.round(IND.target):150;
+  IND.target=Math.min(1000,Math.max(50,base+d));
+  if(IND.erg)return indErg();
+  render();
+}
+function indErgOff(){
+  if(!IND.trainer||!IND.trainer.cp)return;
+  indWrite(new Uint8Array([0x01]));
+  IND.erg=false;IND.ctrl=false;IND.ergW=null;
+  indLog('ERG beendet');
+}
+
+function renderIndoor(){
+  var el=$('#view-indoor');if(!el)return;
+  var T=IND.trainer,R=IND.hr,v=indVals();
+  var cpOk=!!(T&&T.cp),ergDis=cpOk?'':' disabled';
+  var o='<div><p class="eyebrow">Training</p><h2 class="vh">Indoor-Trainer</h2></div>';
+  if(!BT_OK)o+='<div class="notice"><p>Bluetooth ist hier nicht verfügbar. Nutze Chrome oder Edge am Laptop. Safari und Firefox unterstützen Web Bluetooth nicht.</p></div>';
+  if(IND.blocked)o+='<div class="notice"><p>Der Browser blockiert Bluetooth auf dieser Seite. Prüfe in den Website-Einstellungen von Chrome, ob Bluetooth erlaubt ist.</p></div>';
+  o+='<div class="panel"><h3>Smart-Trainer</h3><p class="in-st">'+(IND.busy==='trainer'?'verbindet …':T?'verbunden mit <b>'+h(T.device.name||'Unbekannt')+'</b>':'nicht verbunden')+'</p>'+
+    (T?'<div class="row"><button type="button" class="btn" data-act="inDiscT">Trennen</button></div>':
+      '<div class="row"><button type="button" class="btn primary" data-act="inConnT"'+(BT_OK&&IND.busy!=='trainer'?'':' disabled')+'>Verbinden</button></div>')+'</div>';
+  o+='<div class="panel"><h3>Pulsgurt</h3><p class="in-st">'+(IND.busy==='hr'?'verbindet …':R?'verbunden mit <b>'+h(R.device.name||'Unbekannt')+'</b>':'nicht verbunden')+'</p>'+
+    (R?'<div class="row"><button type="button" class="btn" data-act="inDiscH">Trennen</button></div>':
+      '<div class="row"><button type="button" class="btn primary" data-act="inConnH"'+(BT_OK&&IND.busy!=='hr'?'':' disabled')+'>Verbinden</button></div>')+'</div>';
+  o+='<div class="tiles">'+
+    '<div class="tile"><span class="k">Leistung</span><span class="v"><span id="inPow">'+v.inPow+'</span><small>W</small></span></div>'+
+    '<div class="tile"><span class="k">Trittfrequenz</span><span class="v"><span id="inCad">'+v.inCad+'</span><small>rpm</small></span></div>'+
+    '<div class="tile"><span class="k">Geschwindigkeit</span><span class="v"><span id="inSpd">'+v.inSpd+'</span><small>km/h</small></span></div>'+
+    '<div class="tile"><span class="k">Puls</span><span class="v"><span id="inHr">'+v.inHr+'</span><small>bpm</small></span></div>'+
+    '</div>';
+  o+='<div class="panel"><h3>ERG-Test</h3><p class="explain">Setzt eine feste Wattzahl. Der Trainer passt den Widerstand automatisch an, egal wie schnell du trittst.</p>'+
+    '<div class="row"><button type="button" class="ibtn" data-act="inStep" data-v="-10" aria-label="10 Watt weniger"'+ergDis+'>−10</button>'+
+    '<input id="inTarget" type="number" min="50" max="1000" step="5" inputmode="numeric" class="dt-in" value="'+h(isFinite(IND.target)?String(IND.target):'')+'" aria-label="Zielleistung in Watt">'+
+    '<button type="button" class="ibtn" data-act="inStep" data-v="10" aria-label="10 Watt mehr"'+ergDis+'>+10</button>'+
+    '<span>W</span>'+
+    '<button type="button" class="btn primary" data-act="inErg"'+ergDis+'>'+(IND.erg?'Ziel senden':'ERG starten')+'</button>'+
+    (IND.erg?'<button type="button" class="btn" data-act="inErgOff"'+ergDis+'>ERG beenden</button>':'')+'</div>'+
+    '<p class="in-st">'+(IND.erg?'ERG aktiv: <b>'+h(IND.ergW)+' W</b>':'ERG aus')+'</p></div>';
+  o+='<div class="panel"><h3>Protokoll</h3>'+
+    (IND.log.length?'<ul class="in-log">'+IND.log.map(function(e){return '<li><span>'+h(e.t)+'</span>'+h(e.m)+'</li>'}).join('')+'</ul>':'<p class="muted">Noch keine Ereignisse.</p>')+
+    '<p class="note">Schließe Zwift und andere Apps, die mit der Rolle verbunden sind. Die Rolle kann nur mit einer App gleichzeitig verbunden sein.</p></div>';
+  el.innerHTML=o;
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('[data-act]');if(!t)return;var act=t.dataset.act;
+  var ae=document.activeElement;if(ae&&ae.id==='inTarget'&&ae!==t)ae.blur();
+  if(act==='inConnT')return indConnTrainer();
+  if(act==='inConnH')return indConnHr();
+  if(act==='inDiscT')return indDisc('trainer');
+  if(act==='inDiscH')return indDisc('hr');
+  if(act==='inErg')return indErg();
+  if(act==='inErgOff')return indErgOff();
+  if(act==='inStep')return indStep(Number(t.dataset.v));
+});
+document.addEventListener('input',function(ev){if(ev.target&&ev.target.id==='inTarget')IND.target=ev.target.value===''?NaN:Number(ev.target.value)});
+render();
+})();
+</script>
+</body>
+</html>
