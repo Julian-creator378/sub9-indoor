@@ -401,7 +401,7 @@ var WORKOUTS=[
  {id:'vo2',name:'VO2max 5×4',text:'15m 45-75%, 5x(4m 115%, 4m 50%), 10m 50%'}
 ];
 var WO={ftp:250,sel:null,text:'',err:''};
-/* Garmin-Aufzeichnung: Der Edge zeichnet parallel auf und überträgt die Fahrt automatisch zu Garmin Connect. */
+/* Garmin-Aufzeichnung: Die Uhr (Forerunner 935) zeichnet parallel auf und überträgt die Fahrt automatisch zu Garmin Connect. */
 var GM_KEY='sub9i.garmin',GM={on:true};
 function gmLoad(){try{var v=localStorage.getItem(GM_KEY);if(v!=null)GM.on=v==='1'}catch(e){}}
 function gmSet(on){GM.on=!!on;try{localStorage.setItem(GM_KEY,GM.on?'1':'0')}catch(e){}render()}
@@ -827,9 +827,9 @@ function summaryHtml(){
     '</div>';
   if(R.samples.length<60)o+='<p class="note">Sehr kurze Fahrt.</p>';
   o+=woGraph(R.steps,R.total,R.ftp,{trace:R.samples.map(function(s){return s.p}),id:'wogSum'});
-  if(GM.on)o+='<div class="notice"><p><b>Jetzt am Edge Stopp drücken und „Speichern“ wählen.</b> Die Fahrt geht dann automatisch zu Garmin Connect und erscheint danach in Sub9.</p></div>'+
+  if(GM.on)o+='<div class="notice"><p><b>Jetzt auf der Uhr Stopp drücken und „Speichern“ wählen.</b> Die Fahrt geht dann automatisch zu Garmin Connect und erscheint danach in Sub9.</p></div>'+
     '<div class="row"><button type="button" class="btn primary" data-act="rideClose">Neues Workout</button><button type="button" class="btn" data-act="rideFit">FIT-Datei herunterladen</button></div>'+
-    '<p class="note">Die FIT-Datei nur nutzen, wenn der Edge nicht aufgezeichnet hat. Lädst du beides hoch, ist die Fahrt doppelt in Garmin.</p></div>';
+    '<p class="note">Die FIT-Datei nur nutzen, wenn die Uhr nicht aufgezeichnet hat. Lädst du beides hoch, ist die Fahrt doppelt in Garmin.</p></div>';
   else o+='<div class="row"><button type="button" class="btn primary" data-act="rideFit">FIT-Datei herunterladen</button><button type="button" class="btn" data-act="rideClose">Neues Workout</button></div>'+
     '<p class="note">Hochladen: Garmin Connect im Browser → <a href="https://connect.garmin.com/modern/import-data" target="_blank" rel="noopener">Daten importieren</a>. Danach sieht Sub9 die Fahrt automatisch.</p></div>';
   return o;
@@ -1466,7 +1466,7 @@ function workoutHtml(){
       '<p class="explain">Dauer '+fmtClock(sl.total)+' · Ø '+woAvg(sl.steps,WO.ftp)+' % FTP</p>'+
       woGraph(sl.steps,sl.total,WO.ftp,{id:'wogSel'})+
       '<ol class="wo-steps">'+lis.join('')+'</ol>'+
-      (GM.on?'<div class="notice"><p>Erst am <b>Edge Start drücken</b>, dann hier das Workout starten.</p></div>':'')+
+      (GM.on?'<div class="notice"><p>Erst auf der <b>Uhr Start drücken</b>, dann hier das Workout starten.</p></div>':'')+
       '<div class="row"><button type="button" class="btn primary" data-act="woStart">Workout starten</button></div>';
   }
   o+='</div>';
@@ -1474,16 +1474,16 @@ function workoutHtml(){
 }
 function garminHtml(){
   var o='<div class="panel"><h3>Aufzeichnung für Garmin</h3>'+
-    '<label class="gm-on"><input type="checkbox" id="gmOn"'+(GM.on?' checked':'')+'> Edge 530 zeichnet mit und überträgt zu Garmin</label>';
-  if(GM.on)o+='<p class="explain">Der Indoor-Trainer steuert die Watt, dein Edge zeichnet die Fahrt auf. Nach dem Speichern am Edge landet sie automatisch in Garmin Connect und danach in Sub9 – mit Leistung, Puls und Trittfrequenz.</p>'+
+    '<label class="gm-on"><input type="checkbox" id="gmOn"'+(GM.on?' checked':'')+'> Forerunner 935 zeichnet mit und überträgt zu Garmin</label>';
+  if(GM.on)o+='<p class="explain">Der Indoor-Trainer steuert die Watt, deine Uhr zeichnet die Fahrt auf. Nach dem Speichern auf der Uhr landet sie automatisch in Garmin Connect und danach in Sub9 – mit Leistung, Puls und Trittfrequenz.</p>'+
     '<details><summary>Einmalig einrichten</summary><ol class="gm-steps">'+
-      '<li>Edge: <b>Menü → Sensoren → Sensor hinzufügen → Leistung</b>. Dabei kurz in die Pedale treten, damit die Rolle sendet, dann die Zwift Hub wählen. Wird sie nur als <b>Indoor-Trainer</b> angeboten, nimm das und starte am Edge kein Trainer-Programm – die Watt steuert diese Seite.</li>'+
-      '<li>Edge: <b>Sensor hinzufügen → Herzfrequenz</b> → HRM-Pro Plus (über ANT+). Der Gurt sendet gleichzeitig an Edge und an diese Seite.</li>'+
-      '<li>Edge: Aktivitätsprofil <b>Indoor</b> (bzw. „Rad Indoor“) mit GPS aus anlegen oder verwenden.</li>'+
-      '<li>Edge mit der Garmin-Connect-App am Handy koppeln (oder WLAN einrichten). Dann wird jede gespeicherte Fahrt automatisch übertragen.</li>'+
-    '</ol></details>'+
-    '<p class="note">Bei jeder Fahrt: Edge einschalten, Profil Indoor wählen, warten bis Leistung und Puls angezeigt werden, dann am Edge Start drücken und hier das Workout starten.</p>';
-  else o+='<p class="note">Ohne Edge lädst du nach der Fahrt die FIT-Datei herunter und importierst sie in Garmin Connect.</p>';
+      '<li>Uhr: <b>Einstellungen → Sensoren und Zubehör → Neu hinzufügen → Leistung</b>. Dabei kurz in die Pedale treten, damit die Rolle sendet, dann die Zwift Hub wählen.</li>'+
+      '<li>Uhr: <b>Neu hinzufügen → Herzfrequenz</b> → HRM-Pro Plus. Die Uhr nimmt dann den Gurt statt des Handgelenks, und der Gurt sendet gleichzeitig an diese Seite.</li>'+
+      '<li>Uhr: Aktivität <b>Rad Indoor</b> verwenden (GPS ist dort aus). Fehlt sie, über <b>Aktivitäten und Apps → Hinzufügen</b> ergänzen.</li>'+
+      '<li>Uhr mit der Garmin-Connect-App am Handy gekoppelt lassen. Dann wird jede gespeicherte Fahrt automatisch übertragen.</li>'+
+    '</ol><p class="note">Findet die Uhr die Zwift Hub nicht als Leistungssensor, zeichnet sie trotzdem Puls und Zeit auf. Dann fehlen nur die Watt in Garmin.</p></details>'+
+    '<p class="note">Bei jeder Fahrt: Auf der Uhr Rad Indoor wählen, warten bis Leistung und Puls angezeigt werden, dann auf der Uhr Start drücken und hier das Workout starten.</p>';
+  else o+='<p class="note">Ohne Uhr lädst du nach der Fahrt die FIT-Datei herunter und importierst sie in Garmin Connect.</p>';
   return o+'</div>';
 }
 function freeErgHtml(){
